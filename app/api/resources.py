@@ -41,4 +41,5 @@ class SecureResourceOne(SecureResource):
 class TestResource(Resource):
 
     def get(self):
-        return {'hello': 'world'}
+        timestamp = datetime.utcnow().isoformat()
+        return {'hello': 'world', 'timestamp': timestamp}

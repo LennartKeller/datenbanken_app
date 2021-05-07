@@ -1,16 +1,18 @@
 <template>
   <div class="about">
     <h1>Backend Resources Demo</h1>
+    <h1 style="color: red;">Test</h1>
     <p>Click on the links below to fetch data from the Flask server</p>
     <a href="" @click.prevent="fetchResource">Fetch</a><br/>
-    <a href="" @click.prevent="fetchSecureResource">Fetch Secure Resource</a>
+    <a href="" @click.prevent="fetchSecureResource">Fetch Secure Resource</a><br/>
     <a href="" @click.prevent="fetchTestResource">Test</a>
     <h4>Results</h4>
     <p v-for="r in resources" :key="r.timestamp">
       Server Timestamp: {{r.timestamp | formatTimestamp }}
     </p>
-    <p v-for="r in test" :key="r.Hello">
-      {{r}}
+    <p style="color: red;" v-for="resp in test" :key="resp.hello">
+      Nerv: {{resp}}
+
     </p>
     <p>{{error}}</p>
   </div>
