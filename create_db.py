@@ -34,8 +34,8 @@ if __name__ == '__main__':
             CorpusSchema()
 
 
-            for t in texts:
-                text = Text(text=t, corpus=corpus.id)
+            for idx, t in enumerate(texts):
+                text = Text(text=t, corpus=corpus.id, index=idx)
                 db.session.add(text)
             db.session.commit()
             TextSchema()
