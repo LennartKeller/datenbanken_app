@@ -1,5 +1,6 @@
 from app.models import db, Corpus, Text
 from app import app
+from pathlib import Path
 
 corpus = {
     'c1': [
@@ -14,6 +15,10 @@ corpus = {
 
 if __name__ == '__main__':
     print("Creating mock data")
+    db_dir = Path("app/db").exists()
+    if not db_dir.exists():
+        print("Creating directory ./app/db")
+        db_dir.mkdir()
 
     with app.app_context():
         db.drop_all()
