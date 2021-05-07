@@ -58,10 +58,7 @@ class AllTexts(Resource):
     
     def get(self):
         all_texts = Text.query.all()
-        print(all_texts)
-        dump = self.text_schema.dump(all_texts)
-        print(dump)
-        return dump
+        return self.text_schema.dump(all_texts)
 
 @api_rest.route('/text/<int:id>')
 class AllTexts(Resource):
