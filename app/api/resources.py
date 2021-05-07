@@ -9,7 +9,8 @@ from flask_restx import Resource
 
 from .security import require_auth
 from . import api_rest
-
+from ..schemes import TextSchema
+from ..models import Text
 
 class SecureResource(Resource):
     """ Calls require_auth decorator on all requests """
@@ -47,3 +48,16 @@ class TestResource(Resource):
             'timestamp': timestamp,
             'id': id
             }
+
+@api_rest.route('/text')
+class TextResource(Resource):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.text_schema = TextSchema(many=True)
+    def get(self):
+        
+        all_texts = Text.query.all()
+        print(all_texts)
+        dump = self.text_schema.dump(all_texts)
+        print(dump)
+        return dump
