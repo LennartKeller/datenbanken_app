@@ -15,7 +15,7 @@ corpus = {
 
 if __name__ == '__main__':
     print("Creating mock data")
-    db_dir = Path("app/db").exists()
+    db_dir = Path("app/db")
     if not db_dir.exists():
         print("Creating directory ./app/db")
         db_dir.mkdir()
