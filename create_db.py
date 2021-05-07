@@ -1,4 +1,5 @@
 from app.models import db, Corpus, Text
+from app.schemes import CorpusSchema, TextSchema
 from app import app
 from pathlib import Path
 
@@ -30,7 +31,11 @@ if __name__ == '__main__':
             db.session.add(corpus)
             db.session.commit()
 
+            CorpusSchema()
+
+
             for t in texts:
                 text = Text(text=t, corpus=corpus.id)
                 db.session.add(text)
             db.session.commit()
+            TextSchema()
