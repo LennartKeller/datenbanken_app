@@ -36,3 +36,9 @@ class SecureResourceOne(SecureResource):
     def get(self, resource_id):
         timestamp = datetime.utcnow().isoformat()
         return {'timestamp': timestamp}
+
+@api_rest.route('/test')
+class TestResource(Resource):
+
+    def get(self):
+        return {'hello': 'world'}

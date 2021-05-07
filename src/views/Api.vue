@@ -4,9 +4,13 @@
     <p>Click on the links below to fetch data from the Flask server</p>
     <a href="" @click.prevent="fetchResource">Fetch</a><br/>
     <a href="" @click.prevent="fetchSecureResource">Fetch Secure Resource</a>
+    <a href="" @click.prevent="fetchTestResource">Test</a>
     <h4>Results</h4>
     <p v-for="r in resources" :key="r.timestamp">
       Server Timestamp: {{r.timestamp | formatTimestamp }}
+    </p>
+    <p v-for="r in test" :key="r.Hello">
+      {{r}}
     </p>
     <p>{{error}}</p>
   </div>
@@ -21,6 +25,7 @@ export default {
   data () {
     return {
       resources: [],
+      test: [],
       error: ''
     }
   },
@@ -37,6 +42,14 @@ export default {
       $backend.fetchSecureResource()
         .then(responseData => {
           this.resources.push(responseData)
+        }).catch(error => {
+          this.error = error.message
+        })
+    },
+    fetchTestResource () {
+      $backend.fetchTestResource()
+        .then(responseData => {
+          this.test.push(responseData)
         }).catch(error => {
           this.error = error.message
         })
