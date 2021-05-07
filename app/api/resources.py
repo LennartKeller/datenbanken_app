@@ -50,14 +50,26 @@ class TestResource(Resource):
             }
 
 @api_rest.route('/text')
-class TextResource(Resource):
+class AllTexts(Resource):
+    
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.text_schema = TextSchema(many=True)
+    
     def get(self):
-        
         all_texts = Text.query.all()
         print(all_texts)
         dump = self.text_schema.dump(all_texts)
         print(dump)
         return dump
+
+@api_rest.route('/text/<int:id>')
+class AllTexts(Resource):
+    
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.text_schema = TextSchema()
+    
+    def get(self, id):
+        text = Text.query.get(id)
+        return self.text_schema.dump(text)
