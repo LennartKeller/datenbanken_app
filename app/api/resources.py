@@ -22,7 +22,7 @@ class ResourceOne(Resource):
 
     def get(self, resource_id):
         timestamp = datetime.utcnow().isoformat()
-        return {'timestamp': timestamp}
+        return {'timestamp': timestamp, 'id': resource_id}
 
     def post(self, resource_id):
         json_payload = request.json
@@ -37,9 +37,13 @@ class SecureResourceOne(SecureResource):
         timestamp = datetime.utcnow().isoformat()
         return {'timestamp': timestamp}
 
-@api_rest.route('/test')
+@api_rest.route('/test/<string:id>')
 class TestResource(Resource):
 
-    def get(self):
+    def get(self, id):
         timestamp = datetime.utcnow().isoformat()
-        return {'hello': 'world', 'timestamp': timestamp}
+        return {
+            'hello': 'world',
+            'timestamp': timestamp,
+            'id': id
+            }

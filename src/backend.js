@@ -34,7 +34,7 @@ export default {
   },
 
   fetchTestResource () {
-    return $axios.get('resource/test')
+    return $axios.get('test/uuu')
       .then(response => response.data)
   }
 
