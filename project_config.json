@@ -1,0 +1,16 @@
+{
+    "Name": "Test-Project",
+    "Corpora": ["c1", "c2"],
+    "SequenceAnnotation": {
+        "categories": ["Good", "Bad"],
+        "label": ["Green", "Negative"]
+    },
+    "ActiveLearningConfig": {
+        "on": "SequenceAnnotation",
+        "Estimator": {
+            "path": "./app/active_learning/logreg.py",
+            "name": "LogRegUncertaintySampling"
+        },
+        "begin": 1
+    }
+}
