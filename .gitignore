@@ -2,7 +2,7 @@
 .DS_STORE
 node_modules/
 app/db/
-
+.idea/
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]

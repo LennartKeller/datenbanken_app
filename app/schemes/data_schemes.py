@@ -9,3 +9,11 @@ class TextSchema(ma.SQLAlchemyAutoSchema):
     class Meta:
         model = Text
         include_fk = True
+    
+class CategorySchema(ma.Schema):
+    class Meta:
+        fields = ("value",)
+
+class LabelSchema(ma.Schema):
+    class Meta:
+        fields = ("value",)
