@@ -1,1 +1,0 @@
-pipenv run python run.py & yarn serve && fg
