@@ -13,8 +13,13 @@ def abort_if_false(ctx, param, value):
 def db_handling():
     pass
 
+
 @db_handling.command()
 def init_db():
+    db_path = Path('./app/db')
+    if not db_path.exists():
+        db_path.mkdir()
+
     with app.app_context():
         db.create_all()
 
@@ -90,7 +95,7 @@ def init_project(filename):
             )
             db.session.add(seqconf_to_cat)
             db.session.commit()
-            
+
 
         for label in labels:
             label = Label(
@@ -112,8 +117,8 @@ def init_project(filename):
         estimator_path = active_learning_config.get("Estimator", {}).get("Path")
         al_task = active_learning_config.get("On", {}).get("Task")
         al_objective = active_learning_config.get("On", {}).get("Objective")
-        
-        
+
+
         al_config = ActiveLearningConfig(
             estimator_path=estimator_path,
             estimator_name=estimator_name,

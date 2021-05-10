@@ -1,3 +1,5 @@
+echo "Reinit DB"
+python cli.py init-db
 echo "Drop database"
 yes | python cli.py drop-db
 echo "Reinit DB"
