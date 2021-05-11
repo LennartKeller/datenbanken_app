@@ -36,6 +36,10 @@ export default {
   fetchTestResource () {
     return $axios.get('test/uuu')
       .then(response => response.data)
+  },
+  fetchText (textId) {
+    return $axios.get('text/' + textId.toString())
+      .then(response => response.data)
   }
 
 }

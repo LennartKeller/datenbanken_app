@@ -2,7 +2,7 @@ import Vue from 'vue'
 import Router from 'vue-router'
 import Home from './views/Home.vue'
 import Api from './views/Api.vue'
-import Text from './views/Text.vue'
+import TextBox from './views/TextBox.vue'
 
 Vue.use(Router)
 
@@ -21,7 +21,7 @@ export default new Router({
     {
       path: '/text',
       name: 'text',
-      component: Text
+      component: TextBox
     }
   ]
 })
