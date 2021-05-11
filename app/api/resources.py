@@ -86,35 +86,48 @@ class TextFromProjectByIndex(Resource):
         return self.text_schema.dump(text)
 
 
-@api_rest.route("/collection/<int:collection_id>/text/<int:text_id>/annotation")
-class AnnotationEndpoint(Resource):
+@api_rest.route("/text/seqclass/<int:text_id>/task/<int:task_id>/annotation")
+class SingleAnnotationEndpoint(Resource):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
 
-    def get(self, project_id, text_id):
-        pass
+    def get(self, text_id, task_id):
+        annotation = list(SequenceClassificationAnnotation.query.filter_by(text=text_id, seq_task=task_id))
+        if not annotation:
+            return None, 200
 
-
-    def post(self, collection_id, text_id):
+    def post(self, text_id, task_id):
         data = request.json
-        text_id = int(data['Text'])
-        collection_id = int(data['Collection'])
         class_label = data['Class']
-        task_id = int(data['Task'])
+        task_id_body = int(data['Task'])
+        if task_id_body != task_id:
+            return {'error': 'Task id from URL and body do not match'}, 500
+
 
         task = SequenceClassificationTask.query.get(task_id)
         possible_classes = SeqClassificationTaskToClasses.query.filter_by(seq_class_task=task.id)
-        possible_classes = [c.class_labels for c in possible_classes]
+        possible_classes = [c.class_label for c in possible_classes]
         if class_label not in possible_classes:
-            return 
-        collection_
+            return {'error': 'Invalid class label'}, 500
 
+        existing_annotation = list(SequenceClassificationAnnotation.query.filter_by(text=text_id, seq_task=task_id))
+        if existing_annotation:
+            db.session.delete(existing_annotation[0])
+            db.session.commit()
 
-
-
-        return request.json
-
+        class_label_obj = list(SeqClassificationTaskToClasses.query.filter_by(class_label=class_label))[0]
+        annotation = SequenceClassificationAnnotation(
+            text=text_id,
+            seq_task=task_id,
+            class_label=class_label_obj.id
+        )
+        try:
+            db.session.add(annotation)
+            db.session.commit()
+            return {'success': True}, 200
+        except Exception as e:
+            return {"error": e}, 500
 
 
 
