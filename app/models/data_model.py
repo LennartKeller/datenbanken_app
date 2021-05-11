@@ -1,104 +1,53 @@
 from . import db
 from datetime import datetime
 
-class Corpus(db.Model):
-    __tablename__ = 'Corpus'
+
+class Collection(db.Model):
+    __tablename__ = 'Collection'
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(120), unique=True)
-    
+
     def __repr__(self):
         return f'Corpus {self.name}'
+
 
 class Text(db.Model):
     __tablename__ = 'Text'
     id = db.Column(db.Integer, primary_key=True)
-    corpus = db.Column(db.Integer, db.ForeignKey('Corpus.id'), nullable=False)
+    collection = db.Column(db.Integer, db.ForeignKey('Collection.id'), nullable=False)
     index = db.Column(db.Integer, nullable=False)
-    text = db.Column(db.Text(), nullable=False)
+    content = db.Column(db.Text(), nullable=False)
 
     def __repr__(self):
         return f'Text {self.text[:20]} from Corpus {self.corpus}'
 
-class Project(db.Model):
-    __tablename__ = 'Project'
+
+class SequenceClassificationTask(db.Model):
+    __tablename__ = "SequenceClassificationTask"
     id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(120), nullable=False)
-    active_learning_config = db.Column(
-        db.Integer, db.ForeignKey('ActiveLearningConfig.id'),
-        nullable=False)
-    sequence_annotation_config = db.Column(
-        db.Integer, db.ForeignKey('SequenceAnnotationConfig.id'),
-        nullable=False)
+    al_config = db.Column(db.Integer, db.ForeignKey('ActiveLearningConfigForSequenceClassification.id'))
+    collection = db.Column(db.Integer, db.ForeignKey('Collection.id'), nullable=False)
 
 
-class ActiveLearningConfig(db.Model):
-    __tablename__ = "ActiveLearningConfig"
+
+class ActiveLearningConfigForSequenceClassification(db.Model):
+    __tablename__ = "ActiveLearningConfigForSequenceClassification"
     id = db.Column(db.Integer, primary_key=True)
-    estimator_path = db.Column(db.String, nullable=False)
-    estimator_name = db.Column(db.String, nullable=False)
-    task = db.Column(db.String, nullable=False)
-    objective = db.Column(db.String, nullable=False)
+    start = db.Column(db.Integer, default=1, nullable=False)
+    model_path = db.Column(db.String, nullable=False)
+    model_name = db.Column(db.String, nullable=False)
 
-class SequenceAnnotationConfig(db.Model):
-    __tablename__ = "SequenceAnnotationConfig"
+
+class SeqClassificationTaskToClasses(db.Model):
+    __tablename__ = "SeqClassificationTaskToClasses"
     id = db.Column(db.Integer, primary_key=True)
+    seq_class_task = db.Column(db.Integer, db.ForeignKey('SequenceClassificationTask.id'), nullable=False)
+    class_label = db.Column(db.String(120), nullable=False)
 
-
-class Estimator(db.Model):
-    __tablename__ = "Estimator"
+class SequenceClassificationAnnotation(db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    path = db.Column(db.String, nullable=False)
-    name = db.Column(db.String, nullable=False)
-
-
-
-class Label(db.Model):
-    __tablename__ = "Label"
-    id = db.Column(db.Integer, primary_key=True)
-    sequence_annotation_config = db.Column(
-        db.Integer, db.ForeignKey('SequenceAnnotationConfig.id'))
-    value = db.Column(db.String, nullable=False)
-
-
-class Category(db.Model):
-    __tablename__ = "Category"
-    id = db.Column(db.Integer, primary_key=True)
-    sequence_annotation_config = db.Column(
-        db.Integer, db.ForeignKey('SequenceAnnotationConfig.id'))
-    value = db.Column(db.String, nullable=False)
-
-
-# Relationships
-
-class TextToLabel(db.Model):
-    __tablename__ = 'TextToLabel'
-    text_id = db.Column(db.Integer, db.ForeignKey('Text.id'), primary_key=True)
-    label_id = db.Column(db.Integer, db.ForeignKey('Label.id'), primary_key=True)
-    project_id = db.Column(db.Integer, db.ForeignKey('Project.id'), primary_key=True)
+    text = db.Column(db.Integer, db.ForeignKey('Text.id'), unique=True)
+    seq_task = db.Column(db.Integer, db.ForeignKey('SequenceClassificationTask.id'), nullable=False)
+    class_label = db.Column(db.Integer, db.ForeignKey('SeqClassificationTaskToClasses.id'), nullable=False)
     created = db.Column(db.DateTime, default=datetime.utcnow)
-    child = db.relationship("Label")
 
-class TextToCategory(db.Model):
-    __tablename__ = 'TextToCategory'
-    text_id = db.Column(db.Integer, db.ForeignKey('Text.id'), primary_key=True)
-    category_id = db.Column(db.Integer, db.ForeignKey('Category.id'), primary_key=True)
-    project_id = db.Column(db.Integer, db.ForeignKey('Project.id'), primary_key=True)
-    created = db.Column(db.DateTime, default=datetime.utcnow)
-    child = db.relationship("Category")
-
-class ProjectToCorpus(db.Model):
-    __tablename__ = 'CorpusToProject'
-    project_id = db.Column(db.Integer, db.ForeignKey('Project.id'), primary_key=True)
-    corpus_id = db.Column(db.Integer, db.ForeignKey('Corpus.id'), primary_key=True)
-
-class SequenceAnnotationConfigToLabel(db.Model):
-    __tablename__ = 'SequenceAnnotationConfigToLabel'
-    id = db.Column(db.Integer, primary_key=True)
-    config_id = db.Column(db.Integer, db.ForeignKey('SequenceAnnotationConfig.id'))
-    label_id = db.Column(db.Integer, db.ForeignKey('Label.id'))
-
-class SequenceAnnotationConfigToCategory(db.Model):
-    __tablename__ = 'SequenceAnnotationConfigToCategoryl'
-    id = db.Column(db.Integer, primary_key=True)
-    config_id = db.Column(db.Integer, db.ForeignKey('SequenceAnnotationConfig.id'))
-    category_id = db.Column(db.Integer, db.ForeignKey('Category.id'))

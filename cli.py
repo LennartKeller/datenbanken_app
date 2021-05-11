@@ -9,6 +9,61 @@ def abort_if_false(ctx, param, value):
     if not value:
         ctx.abort()
 
+def handle_collection_config(collection_config):
+    with app.app_context():
+        collection = Collection(
+            name=collection_config['Name']
+        )
+        db.session.add(collection)
+        db.session.add(collection)
+        for t in collection_config['Tasks']:
+            if t['Type'] == "SequenceClassification":
+                # 1. Create Active Learning Stuff
+                alc = t['ActiveLearning']
+                al_config = ActiveLearningConfigForSequenceClassification(
+                    start=alc['Start'],
+                    model_path=alc['ModelPath'],
+                    model_name=alc['ModelName'],
+                )
+                db.session.add(al_config)
+                db.session.commit()
+                # 2. Create Task Config
+                seq_task = SequenceClassificationTask(
+                    al_config=al_config.id,
+                    collection=collection.id
+                )
+                db.session.add(seq_task)
+                db.session.commit()
+                # Map classes to class config
+                for class_label in t['Classes']:
+                    task2class = SeqClassificationTaskToClasses(
+                        seq_class_task=seq_task.id,
+                        class_label=class_label
+                    )
+                    db.session.add(task2class)
+                db.session.commit()
+
+
+        db.session.add(collection)
+        db.session.commit()
+        return collection.id
+
+
+def create_texts_from_list(collection_data, collection_id):
+    with app.app_context():
+        texts = []
+        for idx, t in enumerate(collection_data):
+            text = Text(
+                collection=collection_id,
+                index=idx,
+                content=t,
+            )
+            db.session.add(text)
+            texts.append(texts)
+        db.session.commit()
+        return texts
+
+
 @click.group()
 def db_handling():
     pass
@@ -33,130 +88,38 @@ def drop_db():
 
 
 @click.group()
-def read_corpus():
+def create_collection():
     pass
 
-@read_corpus.command()
-@click.option('-n', '--name')
-@click.option('-s', '--seperator', default="\n", show_default=True)
+@create_collection.command()
 @click.argument('filename', type=click.Path(exists=True))
-def read_plain_text(name, seperator, filename):
-    corpus_data = Path(filename).read_text()
-    texts = corpus_data.split(seperator)
+def from_json(filename):
+    with open(filename) as collection_src_f:
+        collection_src = json.load(collection_src_f)
+    try:
+        collection_config = collection_src['Config']
+    except KeyError:
+        click.echo("Invalid collection src. Missing config section!")
+        return
 
-    with app.app_context():
-        corpus = Corpus(name=name)
-        db.session.add(corpus)
-        db.session.commit()
+    try:
+        collection_data = collection_src['Texts']
+    except KeyError:
+        click.echo("Invalid collection src. Missing data section!")
+        return
 
-        for idx, t in enumerate(texts):
-            text = Text(text=t, corpus=corpus.id, index=idx)
-            db.session.add(text)
-        db.session.commit()
-    click.echo(f"Loaded Corpus {name} with {len(texts)} texts into the application!")
+    collection_id = handle_collection_config(collection_config)
 
+    if isinstance(collection_data, list):
+        texts = create_texts_from_list(collection_data, collection_id)
+        pass
+    else:
+        texts = []
+        click.echo("Not implemented now.")
 
-@click.group()
-def read_project():
-    pass
-
-@read_project.command()
-@click.argument('filename', type=click.Path(exists=True))
-def init_project(filename):
-    with open(filename) as config_file:
-        config = json.load(config_file)
-    project_name = config['Name']
-    corpora = config['Corpora']
-    sequence_annotation_config = config['SequenceAnnotationConfig']
-    active_learning_config = config['ActiveLearningConfig']
-    # TODO Validation
-    # 1. Validate corpus refs
-    #
-    # Create Annotation Config
-    categories = sequence_annotation_config.get("Categories", [])
-    labels = sequence_annotation_config.get("Labels", [])
-
-    with app.app_context():
-        sequence_annotation_config = SequenceAnnotationConfig()
-        db.session.add(sequence_annotation_config)
-        db.session.commit()
-
-        for category in categories:
-            category = Category(
-                sequence_annotation_config=sequence_annotation_config.id,
-                value=category
-            )
-            db.session.add(category)
-            db.session.commit()
-
-            seqconf_to_cat = SequenceAnnotationConfigToCategory(
-                config_id=sequence_annotation_config.id,
-                category_id=category.id
-            )
-            db.session.add(seqconf_to_cat)
-            db.session.commit()
+    click.echo(f"Imported collection {collection_config['Name']} with {len(texts)} into the application.")
 
 
-        for label in labels:
-            label = Label(
-                sequence_annotation_config=sequence_annotation_config.id,
-                value=label
-                )
-            db.session.add(label)
-            db.session.commit()
-
-            seqconf_to_label = SequenceAnnotationConfigToLabel(
-                config_id=sequence_annotation_config.id,
-                label_id=category.id
-            )
-            db.session.add(seqconf_to_label)
-            db.session.commit()
-
-        # Create Active Learning Config
-        estimator_name = active_learning_config.get("Estimator", {}).get("Name")
-        estimator_path = active_learning_config.get("Estimator", {}).get("Path")
-        al_task = active_learning_config.get("On", {}).get("Task")
-        al_objective = active_learning_config.get("On", {}).get("Objective")
-
-
-        al_config = ActiveLearningConfig(
-            estimator_path=estimator_path,
-            estimator_name=estimator_name,
-            task=al_task,
-            objective=al_objective
-        )
-        db.session.add(al_config)
-        db.session.commit()
-
-        # Create Project
-        project = Project(
-            name=project_name,
-            active_learning_config=al_config.id,
-            sequence_annotation_config=sequence_annotation_config.id,
-        )
-
-        db.session.add(project)
-        db.session.commit()
-
-        # Create Corpus Project Mapping
-        c_objs = []
-        for c in corpora:
-            corpus = list(Corpus.query.filter_by(name=c))
-            if not corpus:
-                click.echo(f"Warning: Could not find Corpus {c}")
-                continue
-            corpus = corpus[0]
-            c_objs.append(corpus)
-
-        for c in c_objs:
-            p2c = ProjectToCorpus(
-                project_id=project.id,
-                corpus_id=corpus.id
-            )
-            db.session.add(p2c)
-        db.session.commit()
-
-
-cli = click.CommandCollection(sources=[db_handling, read_corpus, read_project])
+cli = click.CommandCollection(sources=[db_handling, create_collection])
 if __name__ == '__main__':
     cli()

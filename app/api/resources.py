@@ -6,6 +6,8 @@ http://flask-restplus.readthedocs.io
 from datetime import datetime
 from flask import request
 from flask_restx import Resource
+from flask_restx import reqparse
+
 
 
 from .security import require_auth
@@ -52,88 +54,67 @@ class TestResource(Resource):
 
 @api_rest.route('/text')
 class AllTexts(Resource):
-    
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.text_schema = TextSchema(many=True)
-    
+
     def get(self):
         all_texts = Text.query.all()
         return self.text_schema.dump(all_texts)
 
 @api_rest.route('/text/<int:id>')
 class SingleText(Resource):
-    
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.text_schema = TextSchema()
-    
+
     def get(self, id):
         text = Text.query.get(id)
         return self.text_schema.dump(text)
 
-@api_rest.route('/project/<int:project_id>/text-index/<int:text_index>')
+@api_rest.route('/collection/<int:collection_id>/text-index/<int:text_index>')
 class TextFromProjectByIndex(Resource):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.text_schema = TextSchema()
 
-    def get(self, project_id, text_index):
-        project = Project.query.get(project_id)
-        corpora = list(ProjectToCorpus.query.filter_by(project_id=project.id))
-        texts = []
-        for c in corpora:
-            c_texts = Text.query.filter_by(corpus=c.corpus_id)
-            texts.extend(c_texts)
-        try:
-            return self.text_schema.dump(texts[text_index])
-        except IndexError as e:
-            return {'error': str(e)}, 404
+    def get(self, collection_id, text_index):
+        text = list(Text.query.filter_by(collection=collection_id))[text_index]
+        return self.text_schema.dump(text)
 
-@api_rest.route("/project/<int:project_id>/text/<int:text_id>/annotation")
-class AnnotationOfText(Resource):
+
+@api_rest.route("/collection/<int:collection_id>/text/<int:text_id>/annotation")
+class AnnotationEndpoint(Resource):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.cat_schema = CategorySchema(many=True)
-        self.label_schema = LabelSchema(many=True)
 
     def get(self, project_id, text_id):
-        project = Project.query.get(project_id)
-        text = Text.query.get(text_id)
+        pass
 
-        cat_query = TextToCategory.query.filter_by(text_id=text.id, project_id=project.id)
-        label_query = TextToLabel.query.filter_by(text_id=text.id, project_id=project.id)
 
-        labels = [Label.query.get(l.label_id) for l in label_query]
-        categories = [Category.query.get(c.category_id) for c in cat_query]
+    def post(self, collection_id, text_id):
+        data = request.json
+        text_id = int(data['Text'])
+        collection_id = int(data['Collection'])
+        class_label = data['Class']
+        task_id = int(data['Task'])
 
-        return self.label_schema.dump(labels), self.cat_schema.dump(categories)
-    
-    def put(self, project_id, text_id):
-        category = request.form.get('category')
-        labels = request.form.get('labels')
+        task = SequenceClassificationTask.query.get(task_id)
+        possible_classes = SeqClassificationTaskToClasses.query.filter_by(seq_class_task=task.id)
+        possible_classes = [c.class_labels for c in possible_classes]
+        if class_label not in possible_classes:
+            return 
+        collection_
 
-        project = Project.query.get(project_id)
-        text = Text.query.get(text_id)
 
-        
 
-        if category:
-            cat = list(Category.query.filter_by(
-                value=category,
-                sequence_annotation_config=project.sequence_annotation_config
-                )
-            )
-            if not cat:
-                return {"error": "invalid category"}, 500
-            cat = cat[0]
-            new_cat = TextToCategory(text_id=text.id, project_id=project.id, category_id=cat.id)
-            db.session.add(new_cat)
-            db.session.commit()
 
-        return 200
+        return request.json
+
 
 
 
