@@ -1,7 +1,6 @@
 <template>
 <div id="text-component">
   <div id="text-box">
-
     <md-card md-with-hover>
       <md-ripple>
         <md-card-header>
