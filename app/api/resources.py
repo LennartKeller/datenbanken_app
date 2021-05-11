@@ -3,17 +3,14 @@ REST API Resource Routing
 http://flask-restplus.readthedocs.io
 """
 
-from datetime import datetime
 from flask import request
 from flask_restx import Resource
-from flask_restx import reqparse
 
-
-
-from .security import require_auth
 from . import api_rest
-from ..schemes import *
+from .security import require_auth
 from ..models import *
+from ..schemes import *
+
 
 class SecureResource(Resource):
     """ Calls require_auth decorator on all requests """
@@ -41,6 +38,7 @@ class SecureResourceOne(SecureResource):
         timestamp = datetime.utcnow().isoformat()
         return {'timestamp': timestamp}
 
+
 @api_rest.route('/test/<string:id>')
 class TestResource(Resource):
 
@@ -50,7 +48,8 @@ class TestResource(Resource):
             'hello': 'world',
             'timestamp': timestamp,
             'id': id
-            }
+        }
+
 
 @api_rest.route('/text')
 class AllTexts(Resource):
@@ -63,6 +62,7 @@ class AllTexts(Resource):
         all_texts = Text.query.all()
         return self.text_schema.dump(all_texts)
 
+
 @api_rest.route('/text/<int:id>')
 class SingleText(Resource):
 
@@ -73,6 +73,7 @@ class SingleText(Resource):
     def get(self, id):
         text = Text.query.get(id)
         return self.text_schema.dump(text)
+
 
 @api_rest.route('/collection/<int:collection_id>/text-index/<int:text_index>')
 class TextFromProjectByIndex(Resource):
@@ -104,7 +105,6 @@ class SingleAnnotationEndpoint(Resource):
         if task_id_body != task_id:
             return {'error': 'Task id from URL and body do not match'}, 500
 
-
         task = SequenceClassificationTask.query.get(task_id)
         possible_classes = SeqClassificationTaskToClasses.query.filter_by(seq_class_task=task.id)
         possible_classes = [c.class_label for c in possible_classes]
@@ -128,7 +128,3 @@ class SingleAnnotationEndpoint(Resource):
             return {'success': True}, 200
         except Exception as e:
             return {"error": e}, 500
-
-
-
-

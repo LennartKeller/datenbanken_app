@@ -1,5 +1,6 @@
-from . import db
 from datetime import datetime
+
+from . import db
 
 
 class Collection(db.Model):
@@ -29,7 +30,6 @@ class SequenceClassificationTask(db.Model):
     collection = db.Column(db.Integer, db.ForeignKey('Collection.id'), nullable=False)
 
 
-
 class ActiveLearningConfigForSequenceClassification(db.Model):
     __tablename__ = "ActiveLearningConfigForSequenceClassification"
     id = db.Column(db.Integer, primary_key=True)
@@ -44,6 +44,7 @@ class SeqClassificationTaskToClasses(db.Model):
     seq_class_task = db.Column(db.Integer, db.ForeignKey('SequenceClassificationTask.id'), nullable=False)
     class_label = db.Column(db.String(120), nullable=False)
 
+
 class SequenceClassificationAnnotation(db.Model):
     __tablename__ = "SequenceClassificationAnnotation"
     id = db.Column(db.Integer, primary_key=True)
@@ -51,4 +52,3 @@ class SequenceClassificationAnnotation(db.Model):
     seq_task = db.Column(db.Integer, db.ForeignKey('SequenceClassificationTask.id'), nullable=False)
     class_label = db.Column(db.Integer, db.ForeignKey('SeqClassificationTaskToClasses.id'), nullable=False)
     created = db.Column(db.DateTime, default=datetime.utcnow)
-
