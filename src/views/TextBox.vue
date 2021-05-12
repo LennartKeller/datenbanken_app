@@ -1,9 +1,7 @@
 <template>
 <div id="text-component" class="container">
   <h1 v-if="index != null">Text {{index}}</h1>
-  <div id="text-box" class="box">
-    {{text}}
-  </div>
+  <div id="text-box" class="box" v-html="text"/>
   <div v-if="error" id="error-box" class="box">
     {{error}}
   </div>
