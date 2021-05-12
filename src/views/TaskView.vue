@@ -7,7 +7,6 @@
   <b-message v-if="error !== null" type="is-danger" has-icon>{{error}}</b-message>
   <b-button class="button-text-control" id="button-previous" type="is-primary is-light" v-on:click="onClickPrevious">Prev</b-button>
   <b-button class="button-text-control" id="button-next" type="is-primary is-light" v-on:click="onClickNext">Next</b-button>
-  <p v-on:click="onClickPrevious">Test</p>
 </div>
 </template>
 
@@ -35,7 +34,7 @@ export default {
     },
     checkTaskStates () {
       this.error = null
-      if (!this.allTasksFinished) {
+      if (!this.allTasksFinished()) {
         this.error = 'Not all Tasks are finished.'
         return false
       }
@@ -50,17 +49,22 @@ export default {
       if (this.checkTaskStates()) {
         this.incrementCurrentId()
       }
-    }
-  },
-  computed: {
-    allTasksFinished: function () {
+    },
+    allTasksFinished () {
       let states = []
       for (let key in this.$refs) {
         if (key.startsWith('task-')) {
+          console.log(states)
           states.push(this.$refs[key].finished)
         }
       }
       return states.every(elem => elem)
+    }
+  },
+  computed: {
+
+    taskIds: function () {
+      return [1, 2].forEach(elem => this.currentTextId + 'Task-' + elem)
     }
   }
 }

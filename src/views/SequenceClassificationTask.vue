@@ -9,7 +9,6 @@
             </b-radio-button>
       </b-field>
     </section>
-    <p>{{selectedClass}}</p>
   </div>
 </template>
 
