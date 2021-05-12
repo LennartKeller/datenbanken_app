@@ -4,7 +4,7 @@ import Home from './views/Home.vue'
 import Api from './views/Api.vue'
 import TextBox from './views/TextBox.vue'
 import TaskView from '@/views/TaskView'
-
+import CollectionList from '@/views/CollectionList'
 Vue.use(Router)
 
 export default new Router({
@@ -23,6 +23,11 @@ export default new Router({
       path: '/text',
       name: 'text',
       component: TextBox
+    },
+    {
+      path: '/collection',
+      name: 'collectionList',
+      component: CollectionList
     },
     {
       path: '/task-view',
