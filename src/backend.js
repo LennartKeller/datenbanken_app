@@ -57,6 +57,10 @@ export default {
     let url = '/text/' + textId.toString() + '/seq-class-task/' + taskId.toString() + '/annotation'
     return $axios.post(url, annotation)
       .then(response => response.data)
+  },
+  discardText (textId) {
+    return $axios.get('text/' + textId.toString() + '/discard')
+      .then(response => response.data)
   }
 
 }

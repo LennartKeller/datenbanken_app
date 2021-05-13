@@ -8,14 +8,19 @@
         :text-id="currentTextId"
     />
     <br>
-    <p>{{ taskList }}</p>
-    <p>{{ sequenceClassificationTasks }}</p>
+
     <b-message v-if="error !== null" type="is-danger" has-icon>{{ error }}</b-message>
+    <!--
     <b-button class="button-text-control" id="button-previous" type="is-primary is-light" v-on:click="onClickPrevious">
       Prev
     </b-button>
     <b-button class="button-text-control" id="button-next" type="is-primary is-light" v-on:click="onClickNext">Next
     </b-button>
+    -->
+    <b-button v-on:click="onClickDiscard" class="button-text-control" type="is-danger" outlined>Discard</b-button>
+    <b-button v-on:click="onClickSubmit" class="button-text-control" type="is-success" outlined>Submit</b-button>
+    <p>{{ taskList }}</p>
+    <p>{{ sequenceClassificationTasks }}</p>
   </div>
 </template>
 
@@ -51,12 +56,21 @@ export default {
       }
       return true
     },
-    onClickPrevious () {
+    /* onClickPrevious () {
       if (this.checkTaskStates()) {
         this.decrementCurrentId()
       }
     },
     onClickNext () {
+      if (this.checkTaskStates()) {
+        this.incrementCurrentId()
+      }
+    }, */
+    onClickDiscard () {
+      this.discardText()
+        .then(() => this.incrementCurrentId())
+    },
+    onClickSubmit () {
       if (this.checkTaskStates()) {
         this.incrementCurrentId()
       }
@@ -79,6 +93,11 @@ export default {
         .catch(error => {
           this.error = error
         })
+    },
+    discardText () {
+      return $backend.discardText(this.currentTextId)
+        .then(response => { console.log(response.success) })
+        .catch(error => { this.error = error })
     }
   },
   computed: {
