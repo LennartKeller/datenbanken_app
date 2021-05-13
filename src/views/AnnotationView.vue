@@ -2,10 +2,11 @@
   <div id="task-view" class="container">
     <TextBox v-bind:textId="currentTextId" :key="currentTextId" ref="textBox"></TextBox>
     <SequenceClassificationTask
-        v-for="t in sequenceClassificationTasks"
+        v-for="(t, idx) in sequenceClassificationTasks"
         :key="t.id.toString() + currentTextId.toString()"
         :task-id="t.id"
         :text-id="currentTextId"
+        :ref="'task-' + idx.toString()"
     />
     <br>
 
@@ -17,10 +18,14 @@
     <b-button class="button-text-control" id="button-next" type="is-primary is-light" v-on:click="onClickNext">Next
     </b-button>
     -->
-    <b-button v-on:click="onClickDiscard" class="button-text-control" type="is-danger" outlined>Discard</b-button>
-    <b-button v-on:click="onClickSubmit" class="button-text-control" type="is-success" outlined>Submit</b-button>
-    <p>{{ taskList }}</p>
-    <p>{{ sequenceClassificationTasks }}</p>
+    <b-button v-on:click="onClickDiscard" class="button-text-control" type="is-danger" outlined>
+       <b-icon pack="fas" icon="times-circle" size="is-small"></b-icon>
+      <span>Discard</span>
+    </b-button>
+    <b-button v-on:click="onClickSubmit" class="button-text-control" type="is-success" outlined>
+      <b-icon pack="fas" icon="check-circle" size="is-small"></b-icon>
+      <span>Submit</span>
+    </b-button>
   </div>
 </template>
 
@@ -68,7 +73,10 @@ export default {
     }, */
     onClickDiscard () {
       this.discardText()
-        .then(() => this.incrementCurrentId())
+        .then(() => {
+          this.error = null
+          this.incrementCurrentId()
+        })
     },
     onClickSubmit () {
       if (this.checkTaskStates()) {
@@ -79,8 +87,7 @@ export default {
       let states = []
       for (let key in this.$refs) {
         if (key.startsWith('task-')) {
-          console.log(states)
-          states.push(this.$refs[key].finished)
+          states.push(this.$refs[key][0].isFinished())
         }
       }
       return states.every(elem => elem)

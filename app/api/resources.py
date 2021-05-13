@@ -177,3 +177,19 @@ class SequenceClassificationConfigurationResource(Resource):
             c.class_label for c in SeqClassificationTaskToClasses.query.filter_by(seq_class_task=task_id)
         ]
         return {'classLabels': classes}
+
+@api_rest.route('collection/<int:collection_id>/next')
+class NextTextResource(Resource):
+
+    def __init__(self, *args, **kwargs):
+        super.__init__(*args, **kwargs)
+        self.text_schema = TextSchema()
+
+    def get(self, collection_id):
+        # TODO Refactoring when adding new tasks
+        if True: # No active learning
+            collection_texts = Text.join()
+            for text in collection_texts:
+                pass
+        else:
+            pass

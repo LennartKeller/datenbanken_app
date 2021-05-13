@@ -1,5 +1,5 @@
 <template>
-  <div class="column is-vcentered">
+  <div class="container is-vcentered">
     <section class="column">
       <b-field>
             <b-radio-button v-for="cls in classes" v-bind:key="cls" v-model="selectedClass" :native-value="cls"
@@ -9,7 +9,6 @@
             </b-radio-button>
       </b-field>
     </section>
-    <p>{{selectedClass}}</p>
   </div>
 </template>
 
@@ -47,13 +46,18 @@ export default {
       $backend.postSequenceClassificationAnnotation(annotation, this.textId, this.taskId)
         .then(response => { console.log(response.success) })
         .catch(error => { this.error = error })
+    },
+    isFinished () {
+      return this.selectedClass !== null
     }
   },
   beforeMount () {
     this.getTaskConfig()
   },
   beforeDestroy () {
-    this.submit()
+    if (this.selectedClass !== null) {
+      this.submit()
+    }
   }
 }
 </script>
