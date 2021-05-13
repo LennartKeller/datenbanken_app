@@ -18,6 +18,7 @@ class Text(db.Model):
     collection = db.Column(db.Integer, db.ForeignKey('Collection.id'), nullable=False)
     index = db.Column(db.Integer, nullable=False)
     content = db.Column(db.Text(), nullable=False)
+    discarded = db.Column(db.Boolean, default=False)
 
     def __repr__(self):
         return f'Text {self.text[:20]} from Corpus {self.corpus}'

@@ -11,7 +11,7 @@
       <div class="card" v-for="collection in collectionList" :key="collection.id">
         <router-link :to="{name: 'annotation-view', params: {collectionId: collection.id}}">
           <header class="card-header">
-            <p class="card-header-title">
+            <p class="card-header-title"  >
              {{collection.name}}
             </p>
           </header>

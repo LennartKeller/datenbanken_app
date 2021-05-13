@@ -1,7 +1,8 @@
 <template>
 <div id="text-component" class="container">
   <h1 v-if="index != null">Text {{index}}</h1>
-  <div id="text-box" class="box" v-html="text"/>
+  <div id="text-box" class="box" v-html="text">
+  </div>
   <div v-if="error" id="error-box" class="box">
     {{error}}
   </div>
@@ -17,7 +18,8 @@ export default {
   data () {
     return {
       textData: {},
-      error: null
+      error: null,
+      loading: null
     }
   },
   computed: {
@@ -39,6 +41,7 @@ export default {
       $backend.fetchText(this.textId)
         .then(response => { this.textData = response })
         .catch(error => { this.error = error.message })
+      return true
     }
   },
   beforeMount () {

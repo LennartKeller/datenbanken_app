@@ -44,6 +44,19 @@ export default {
   fetchCollectionList () {
     return $axios.get('collection')
       .then(response => response.data)
+  },
+  fetchTasksOfCollection (collectionId) {
+    return $axios.get('collection/' + collectionId.toString() + '/tasks')
+      .then(response => response.data)
+  },
+  fetchSequenceClassificationTaskConfig (taskId) {
+    return $axios.get('sequence-classification/' + taskId.toString())
+      .then(response => response.data)
+  },
+  postSequenceClassificationAnnotation (annotation, textId, taskId) {
+    let url = '/text/' + textId.toString() + '/seq-class-task/' + taskId.toString() + '/annotation'
+    return $axios.post(url, annotation)
+      .then(response => response.data)
   }
 
 }

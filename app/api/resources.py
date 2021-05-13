@@ -73,6 +73,14 @@ class SingleText(Resource):
         text = Text.query.get(id)
         return self.text_schema.dump(text)
 
+@api_rest.route('/text/<int:text_id>/discard')
+class DiscardText(Resource):
+    def get(self, text_id):
+        text = Text.query.get(text_id)
+        text.discarded = True
+        db.session.add(text)
+        db.session.commit()
+        return {'success': True}, 200
 
 @api_rest.route('/collection')
 class AllCollectionsResource(Resource):
@@ -85,6 +93,7 @@ class AllCollectionsResource(Resource):
         return self.collection_schema.dump(collections)
 
 
+# TODO Remove ASAP
 @api_rest.route('/collection/<int:collection_id>/text-index/<int:text_index>')
 class TextFromProjectByIndex(Resource):
 
@@ -97,23 +106,24 @@ class TextFromProjectByIndex(Resource):
         return self.text_schema.dump(text)
 
 
-@api_rest.route("/text/seqclass/<int:text_id>/task/<int:task_id>/annotation")
+@api_rest.route("/text/<int:text_id>/seq-class-task/<int:task_id>/annotation")
 class SingleAnnotationEndpoint(Resource):
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
+        self.seq_class_to_class_schema = SequenceClassificationTaskSchema()
 
     def get(self, text_id, task_id):
         annotation = list(SequenceClassificationAnnotation.query.filter_by(text=text_id, seq_task=task_id))
         if not annotation:
             return None, 200
+        annotation = annotation[0]
+        class_label_entry = SeqClassificationTaskToClasses.query.get(annotation.class_label)
+        return self.seq_class_to_class_schema.dump(class_label_entry)
 
     def post(self, text_id, task_id):
         data = request.json
-        class_label = data['Class']
-        task_id_body = int(data['Task'])
-        if task_id_body != task_id:
-            return {'error': 'Task id from URL and body do not match'}, 500
+        class_label = data['class']
 
         task = SequenceClassificationTask.query.get(task_id)
         possible_classes = SeqClassificationTaskToClasses.query.filter_by(seq_class_task=task.id)
@@ -138,3 +148,32 @@ class SingleAnnotationEndpoint(Resource):
             return {'success': True}, 200
         except Exception as e:
             return {"error": e}, 500
+
+
+@api_rest.route('/collection/<int:collection_id>/tasks')
+class TasksOfCollectionResource(Resource):
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.seq_task_schema = SequenceClassificationTaskSchema(many=True)
+
+    def get(self, collection_id):
+        tasks_dumps = []
+        # Get sequence classification tasks
+        seq_class_tasks = SequenceClassificationTask.query.filter_by(collection=collection_id)
+        seq_class_tasks_dumps = self.seq_task_schema.dump(seq_class_tasks)
+        for t in seq_class_tasks_dumps:
+            t['type'] = "SequenceClassification"
+            tasks_dumps.append(t)
+        return tasks_dumps
+
+
+@api_rest.route('/sequence-classification/<int:task_id>')
+class SequenceClassificationConfigurationResource(Resource):
+
+    def get(self, task_id):
+        # get classes
+        classes = [
+            c.class_label for c in SeqClassificationTaskToClasses.query.filter_by(seq_class_task=task_id)
+        ]
+        return {'classLabels': classes}
