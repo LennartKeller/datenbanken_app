@@ -8,7 +8,6 @@ from flask_restx import Resource
 
 from . import api_rest
 from .security import require_auth
-from ..models import *
 from ..schemes import *
 
 
@@ -73,6 +72,17 @@ class SingleText(Resource):
     def get(self, id):
         text = Text.query.get(id)
         return self.text_schema.dump(text)
+
+
+@api_rest.route('/collection')
+class AllCollectionsResource(Resource):
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.collection_schema = CollectionSchema(many=True)
+
+    def get(self):
+        collections = Collection.query.all()
+        return CollectionSchema.dump(collections)
 
 
 @api_rest.route('/collection/<int:collection_id>/text-index/<int:text_index>')
