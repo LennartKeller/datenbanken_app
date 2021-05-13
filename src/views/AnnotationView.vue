@@ -16,7 +16,8 @@ import TextBox from '@/views/TextBox'
 import SequenceClassificationTask from '@/views/SequenceClassificationTask'
 
 export default {
-  name: 'TaskView',
+  name: 'AnnotationView',
+  props: ['collectionId'],
   components: {SequenceClassificationTask, TextBox},
   data () {
     return {

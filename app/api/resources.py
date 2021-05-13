@@ -82,7 +82,7 @@ class AllCollectionsResource(Resource):
 
     def get(self):
         collections = Collection.query.all()
-        return CollectionSchema.dump(collections)
+        return self.collection_schema.dump(collections)
 
 
 @api_rest.route('/collection/<int:collection_id>/text-index/<int:text_index>')

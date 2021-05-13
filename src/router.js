@@ -3,7 +3,7 @@ import Router from 'vue-router'
 import Home from './views/Home.vue'
 import Api from './views/Api.vue'
 import TextBox from './views/TextBox.vue'
-import TaskView from '@/views/TaskView'
+import AnnotationView from '@/views/AnnotationView'
 import CollectionList from '@/views/CollectionList'
 Vue.use(Router)
 
@@ -30,9 +30,10 @@ export default new Router({
       component: CollectionList
     },
     {
-      path: '/task-view',
-      name: 'task-view',
-      component: TaskView
+      path: '/annotation-view/:collectionId',
+      props: true,
+      name: 'annotation-view',
+      component: AnnotationView
     }
   ]
 })

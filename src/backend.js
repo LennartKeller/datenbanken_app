@@ -40,6 +40,10 @@ export default {
   fetchText (textId) {
     return $axios.get('text/' + textId.toString())
       .then(response => response.data)
+  },
+  fetchCollectionList () {
+    return $axios.get('collection')
+      .then(response => response.data)
   }
 
 }
