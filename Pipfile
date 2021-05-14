@@ -5,13 +5,14 @@ name = "pypi"
 
 [packages]
 gunicorn = "==19.7.1"
-flask-restx = "*"
 python-dotenv = "*"
-flask = "*"
 flask-sqlalchemy = "*"
 flask-marshmallow = "*"
 marshmallow-sqlalchemy = "*"
 pylint = "*"
+scikit-learn = "*"
+flask-restx = "==0.4.0"
+flask = "==1.1.2"
 
 [dev-packages]
 pytest = "*"
