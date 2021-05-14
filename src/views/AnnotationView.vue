@@ -1,31 +1,27 @@
 <template>
   <div id="task-view" class="container">
-    <TextBox v-bind:textId="currentTextId" :key="currentTextId" ref="textBox"></TextBox>
-    <SequenceClassificationTask
-        v-for="(t, idx) in sequenceClassificationTasks"
-        :key="t.id.toString() + currentTextId.toString()"
-        :task-id="t.id"
-        :text-id="currentTextId"
-        :ref="'task-' + idx.toString()"
-    />
-    <br>
+    <b-message v-if="success" type="is-success" has-icon>Collection finished!</b-message>
+    <div id="tools" v-if="!success">
+      <TextBox v-bind:textId="currentTextId" :key="currentTextId" ref="textBox"></TextBox>
+      <SequenceClassificationTask
+          v-for="(t, idx) in sequenceClassificationTasks"
+          :key="t.id.toString() + currentTextId.toString()"
+          :task-id="t.id"
+          :text-id="currentTextId"
+          :ref="'task-' + idx.toString()"
+      />
+      <br>
 
-    <b-message v-if="error !== null" type="is-danger" has-icon>{{ error }}</b-message>
-    <!--
-    <b-button class="button-text-control" id="button-previous" type="is-primary is-light" v-on:click="onClickPrevious">
-      Prev
-    </b-button>
-    <b-button class="button-text-control" id="button-next" type="is-primary is-light" v-on:click="onClickNext">Next
-    </b-button>
-    -->
-    <b-button v-on:click="onClickDiscard" class="button-text-control" type="is-danger" outlined>
-       <b-icon pack="fas" icon="times-circle" size="is-small"></b-icon>
-      <span>Discard</span>
-    </b-button>
-    <b-button v-on:click="onClickSubmit" class="button-text-control" type="is-success" outlined>
-      <b-icon pack="fas" icon="check-circle" size="is-small"></b-icon>
-      <span>Submit</span>
-    </b-button>
+      <b-message v-if="error !== null" type="is-danger" has-icon>{{ error }}</b-message>
+      <b-button v-on:click="onClickDiscard" class="button-text-control" type="is-danger" outlined>
+         <b-icon pack="fas" icon="times-circle" size="is-small"></b-icon>
+        <span>Discard</span>
+      </b-button>
+      <b-button v-on:click="onClickSubmit" class="button-text-control" type="is-success" outlined>
+        <b-icon pack="fas" icon="check-circle" size="is-small"></b-icon>
+        <span>Submit</span>
+      </b-button>
+    </div>
   </div>
 </template>
 
@@ -41,18 +37,14 @@ export default {
   data () {
     return {
       collectionData: {},
+      nextTextIds: [],
       currentTextId: 1,
       taskList: [],
-      error: null
+      error: null,
+      success: false
     }
   },
   methods: {
-    incrementCurrentId () {
-      this.currentTextId++
-    },
-    decrementCurrentId () {
-      this.currentTextId--
-    },
     checkTaskStates () {
       this.error = null
       if (!this.allTasksFinished()) {
@@ -61,26 +53,35 @@ export default {
       }
       return true
     },
-    /* onClickPrevious () {
-      if (this.checkTaskStates()) {
-        this.decrementCurrentId()
-      }
+    popCurrentTextId () {
+      console.log(this.currentTextId)
+      this.currentTextId = this.nextTextIds.pop()
+      console.log(this.currentTextId)
     },
-    onClickNext () {
-      if (this.checkTaskStates()) {
-        this.incrementCurrentId()
-      }
-    }, */
     onClickDiscard () {
       this.discardText()
         .then(() => {
           this.error = null
-          this.incrementCurrentId()
+          if (this.nextTextIds.length === 0) {
+            this.getNextTextIds()
+              .then(() => this.popCurrentTextId())
+          } else {
+            this.popCurrentTextId()
+          }
         })
     },
     onClickSubmit () {
       if (this.checkTaskStates()) {
-        this.incrementCurrentId()
+        this.error = null
+        if (this.nextTextIds.length === 0) {
+          this.getNextTextIds()
+            .then((resolve) => {
+              this.popCurrentTextId()
+            })
+            .catch((error) => { console.log(error) })
+        } else {
+          this.popCurrentTextId()
+        }
       }
     },
     allTasksFinished () {
@@ -105,6 +106,11 @@ export default {
       return $backend.discardText(this.currentTextId)
         .then(response => { console.log(response.success) })
         .catch(error => { this.error = error })
+    },
+    getNextTextIds () {
+      return $backend.fetchNextTextIds(this.collectionId)
+        .then(response => { this.nextTextIds.push(...response.map(obj => obj.id)) })
+        .catch(error => { this.error = error.error })
     }
   },
   computed: {
@@ -114,6 +120,7 @@ export default {
   },
   beforeMount () {
     this.getTasks()
+    this.getNextTextIds()
   }
 }
 </script>

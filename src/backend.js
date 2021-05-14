@@ -61,6 +61,10 @@ export default {
   discardText (textId) {
     return $axios.get('text/' + textId.toString() + '/discard')
       .then(response => response.data)
+  },
+  fetchNextTextIds (collectionId) {
+    return $axios.get('collection/' + collectionId.toString() + '/next')
+      .then(response => response.data)
   }
 
 }
