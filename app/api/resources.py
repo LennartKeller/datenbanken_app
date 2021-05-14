@@ -9,6 +9,7 @@ from flask_restx import Resource
 from . import api_rest
 from .security import require_auth
 from ..schemes import *
+from ..models import *
 
 
 class SecureResource(Resource):
@@ -183,13 +184,29 @@ class NextTextResource(Resource):
 
     def __init__(self, *args, **kwargs):
         super.__init__(*args, **kwargs)
+        self.queue = []
         self.text_schema = TextSchema()
+        self.al_components = {}
 
     def get(self, collection_id):
-        # TODO Refactoring when adding new tasks
-        if True: # No active learning
-            collection_texts = Text.join()
-            for text in collection_texts:
-                pass
-        else:
+
+        # 1. Option : If there is any text left in queue just return it ..
+        if self.queue:
+            text = self.queue.pop()
+
+        # 2. Option: Active Learning
+        # 2.1 Suboption: Active Learning is registered but not yet enabled
+        # => Enable it (If each label from config is in the data at least once)
+        # 2.X: Finally draw an instance for each al task return first put other in queue
+        if self.al_components:
             pass
+
+
+        # 3. Option: If there os no active learning registered or active just return texts sorted by index
+        if not self.al_components:
+            pass
+
+
+
+        return self.text_schema.dump(text)
+

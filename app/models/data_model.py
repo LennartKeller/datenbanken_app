@@ -21,7 +21,7 @@ class Text(db.Model):
     discarded = db.Column(db.Boolean, default=False)
 
     def __repr__(self):
-        return f'Text {self.text[:20]} from Corpus {self.corpus}'
+        return f'Text {self.content[:20]} from Collection {self.collection}'
 
 
 class SequenceClassificationTask(db.Model):
