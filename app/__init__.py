@@ -1,10 +1,10 @@
 import os
 
-from flask import Flask, current_app, send_file
+from flask import Flask, current_app, send_file, jsonify
 
 from .api import api_bp
 from .client import client_bp
-from .models import db
+from .models import db, Collection
 from .schemes import ma
 
 app = Flask(__name__, static_folder='../dist/static')
@@ -24,3 +24,8 @@ def index_client():
     dist_dir = current_app.config['DIST_DIR']
     entry = os.path.join(dist_dir, 'index.html')
     return send_file(entry)
+
+
+@app.route('/debug')
+def debug():
+    return jsonify([t.content for t in Collection.query.get(1).get_unannotated_texts()])

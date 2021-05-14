@@ -3,15 +3,15 @@ from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import SGDClassifier
 from sklearn.pipeline import make_pipeline
 
-from .base_estimator import BaseActiveLearningComponent
+from app.active_learning.base_estimator import BaseActiveLearningComponent
 
 
 class LogRegUncertainty(BaseActiveLearningComponent):
 
     def __init__(self):
         self.pipeline = make_pipeline(
-            TfidfVectorizer(stop_words='log', max_features=200000),
-            SGDClassifier(loss='hinge', penalty='l2')
+            TfidfVectorizer(stop_words='english', max_features=200000),
+            SGDClassifier(loss='log', penalty='l2')
         )
 
     def fit(self, X, y):

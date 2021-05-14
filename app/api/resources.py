@@ -8,8 +8,8 @@ from flask_restx import Resource
 
 from . import api_rest
 from .security import require_auth
+from ..active_learning import init_active_learning_component
 from ..schemes import *
-from ..models import *
 
 
 class SecureResource(Resource):
@@ -74,6 +74,7 @@ class SingleText(Resource):
         text = Text.query.get(id)
         return self.text_schema.dump(text)
 
+
 @api_rest.route('/text/<int:text_id>/discard')
 class DiscardText(Resource):
     def get(self, text_id):
@@ -82,6 +83,7 @@ class DiscardText(Resource):
         db.session.add(text)
         db.session.commit()
         return {'success': True}, 200
+
 
 @api_rest.route('/collection')
 class AllCollectionsResource(Resource):
@@ -125,7 +127,6 @@ class SingleAnnotationEndpoint(Resource):
     def post(self, text_id, task_id):
         data = request.json
         class_label = data['class']
-
         task = SequenceClassificationTask.query.get(task_id)
         possible_classes = SeqClassificationTaskToClasses.query.filter_by(seq_class_task=task.id)
         possible_classes = [c.class_label for c in possible_classes]
@@ -179,34 +180,57 @@ class SequenceClassificationConfigurationResource(Resource):
         ]
         return {'classLabels': classes}
 
-@api_rest.route('collection/<int:collection_id>/next')
+
+@api_rest.route('/collection/<int:collection_id>/next')
 class NextTextResource(Resource):
 
     def __init__(self, *args, **kwargs):
-        super.__init__(*args, **kwargs)
-        self.queue = []
-        self.text_schema = TextSchema()
+        super().__init__(*args, **kwargs)
+        self.text_schema = TextSchema(many=True)
         self.al_components = {}
 
     def get(self, collection_id):
+        queue = []
+        # 0. Get collection
+        collection = Collection.query.get(collection_id)
+        if collection is None:
+            return {'error': 'Invalid collection id'}, 500
 
-        # 1. Option : If there is any text left in queue just return it ..
-        if self.queue:
-            text = self.queue.pop()
+        # 1. Get tasks
+        all_tasks = collection.get_tasks()
+        for task_type, tasks in all_tasks.items():
+            if task_type == 'SequenceClassification':
+                for seq_task in tasks:
+                    if al_config_id := seq_task.al_config is not None:
+                        # Check if enabled task al comp is not already loaded
+                        if f'SeqClass-{al_config_id}' not in self.al_components:
+                            al_config = ActiveLearningConfigForSequenceClassification.query.get(al_config_id)
+                            component = init_active_learning_component(al_config)
+                            self.al_components[f'SeqClass-{al_config_id}'] = component
 
-        # 2. Option: Active Learning
-        # 2.1 Suboption: Active Learning is registered but not yet enabled
-        # => Enable it (If each label from config is in the data at least once)
-        # 2.X: Finally draw an instance for each al task return first put other in queue
-        if self.al_components:
-            pass
+                        # Load component fit it and let it rank
+                        pool_texts_query = list(collection.get_unannotated_texts())
+                        pool_texts = [t.content for t in pool_texts_query]
+                        if not pool_texts:
+                            return {'error': 'All texts are annoated'}, 500
+                        train_text_query = list(collection.get_annotated_texts())
+                        train_labels = [seq_task.get_annotation(t).class_label for t in train_text_query]
+                        if len(set(train_labels)) < 2:
+                            break
+                        train_texts = [t.content for t in train_text_query]
+                        if len(train_texts) < 2:
+                            break
 
+                        print("Querying using active learning")
+                        component = self.al_components[f'SeqClass-{al_config_id}']
+                        component.fit(train_texts, train_labels)
+                        idx = component.rank(pool_texts)[0]
+                        queue.append(pool_texts_query[idx])
 
-        # 3. Option: If there os no active learning registered or active just return texts sorted by index
-        if not self.al_components:
-            pass
+        if not queue:
+            unannotated_texts = collection.get_unannotated_texts()
+            if not unannotated_texts:
+                return {'error': 'All texts are annoated'}, 500
+            queue.append(unannotated_texts[0])
 
-
-
-        return self.text_schema.dump(text)
-
+        return self.text_schema.dump(queue)
