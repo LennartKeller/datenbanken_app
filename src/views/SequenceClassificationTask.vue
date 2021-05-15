@@ -55,9 +55,9 @@ export default {
     this.getTaskConfig()
   },
   beforeDestroy () {
-    if (this.selectedClass !== null) {
+    /* if (this.selectedClass !== null) {
       this.submit()
-    }
+    } */
   }
 }
 </script>

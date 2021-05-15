@@ -2,8 +2,9 @@
   <div id="task-view" class="container">
     <b-message v-if="success" type="is-success" has-icon>Collection finished!</b-message>
     <div id="tools" v-if="!success">
-      <TextBox v-bind:textId="currentTextId" :key="currentTextId" ref="textBox"></TextBox>
+      <TextBox v-if="currentTextId !== null" v-bind:textId="currentTextId" :key="currentTextId" ref="textBox"></TextBox>
       <SequenceClassificationTask
+          v-if="currentTextId !== null"
           v-for="(t, idx) in sequenceClassificationTasks"
           :key="t.id.toString() + currentTextId.toString()"
           :task-id="t.id"
@@ -11,16 +12,19 @@
           :ref="'task-' + idx.toString()"
       />
       <br>
-
+      <p v-on:click="submitAllTasks">Submit</p>
+      <p>{{currentTextId}}</p>
       <b-message v-if="error !== null" type="is-danger" has-icon>{{ error }}</b-message>
-      <b-button v-on:click="onClickDiscard" class="button-text-control" type="is-danger" outlined>
-         <b-icon pack="fas" icon="times-circle" size="is-small"></b-icon>
-        <span>Discard</span>
-      </b-button>
-      <b-button v-on:click="onClickSubmit" class="button-text-control" type="is-success" outlined>
-        <b-icon pack="fas" icon="check-circle" size="is-small"></b-icon>
-        <span>Submit</span>
-      </b-button>
+      <div v-if="currentTextId !== null">
+        <b-button v-on:click="onClickDiscard" class="button-text-control" type="is-danger" outlined>
+           <b-icon pack="fas" icon="times-circle" size="is-small"></b-icon>
+          <span>Discard</span>
+        </b-button>
+        <b-button v-on:click="onClickSubmit" class="button-text-control" type="is-success" outlined>
+          <b-icon pack="fas" icon="check-circle" size="is-small"></b-icon>
+          <span>Submit</span>
+        </b-button>
+      </div>
     </div>
   </div>
 </template>
@@ -38,7 +42,7 @@ export default {
     return {
       collectionData: {},
       nextTextIds: [],
-      currentTextId: 1,
+      currentTextId: null,
       taskList: [],
       error: null,
       success: false
@@ -54,7 +58,9 @@ export default {
       return true
     },
     popCurrentTextId () {
+      console.log(this.currentTextId)
       this.currentTextId = this.nextTextIds.pop()
+      console.log(this.currentTextId)
     },
     onClickDiscard () {
       this.discardText()
@@ -71,15 +77,16 @@ export default {
     onClickSubmit () {
       if (this.checkTaskStates()) {
         this.error = null
-        if (this.nextTextIds.length === 0) {
-          this.getNextTextIds()
-            .then(() => {
+        this.submitAllTasks()
+          .then(() => {
+            if (this.nextTextIds.length === 0) {
+              this.getNextTextIds()
+                .then(() => this.popCurrentTextId())
+                .catch((error) => { console.log(error) })
+            } else {
               this.popCurrentTextId()
-            })
-            .catch((error) => { console.log(error) })
-        } else {
-          this.popCurrentTextId()
-        }
+            }
+          })
       }
     },
     allTasksFinished () {
@@ -109,6 +116,19 @@ export default {
       return $backend.fetchNextTextIds(this.collectionId)
         .then(response => { this.nextTextIds = this.nextTextIds.concat(response) })
         .catch(error => { this.error = error.error })
+    },
+    submitAllTasks () {
+      return new Promise(resolve => {
+        let taskComponents = Object.keys(this.$refs)
+          .filter(key => key.startsWith('task-'))
+          .reduce((obj, key) => {
+            obj[key] = this.$refs[key]
+            return obj
+          }, {})
+        console.log(taskComponents)
+        Object.entries(taskComponents).forEach(([taskRef, taskComp]) => taskComp[0].submit())
+        resolve()
+      })
     }
   },
   computed: {
@@ -116,9 +136,10 @@ export default {
       return this.taskList.filter(task => task.type === 'SequenceClassification')
     }
   },
-  beforeMount () {
-    this.getTasks()
+  created () {
     this.getNextTextIds()
+      .then(() => { this.popCurrentTextId() })
+    this.getTasks()
   }
 }
 </script>
