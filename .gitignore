@@ -4,12 +4,14 @@
 node_modules/
 app/db/
 .idea/
+./imdb_reviews.txt
+./LargeIMDBCollection.json
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 *$py.class
-imdb_reviews.txt
-LargeIMDBCollection.json
+
 
 # C extensions
 *.so
