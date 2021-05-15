@@ -1,5 +1,6 @@
+import json
 from datetime import datetime
-
+from more_itertools import flatten
 from . import db
 
 
@@ -43,6 +44,34 @@ class Collection(db.Model):
             # More Tasks here
         return list(sorted(annotated_texts, key=lambda t: t.index))
 
+    def serialize_dict(self):
+        data = {
+            'Config': {
+                'Name': self.name,
+            }
+        }
+        # Serialiaize tasks
+        all_tasks = list(flatten([list(tasks) for tasks in self.get_tasks().values()]))
+        all_tasks_serialized = [task.serialize_dict() for task in all_tasks]
+        data['Tasks'] = all_tasks_serialized
+
+        # Get text and Annotations
+        texts = Text.query.filter_by(collection=self.id)
+        texts_serialized = []
+        for text in texts:
+            # Get annotations of texts
+            annotations = []
+            for task in all_tasks:
+                # 1. Query for SeqClass Annotations
+                seq_class_annotation = list(SequenceClassificationAnnotation.query\
+                    .filter_by(text=text.id, seq_task=task.id))
+                annotations.extend([annotation.serialize_dict() for annotation in seq_class_annotation])
+            text_serialized = text.serialize_dict()
+            text_serialized['Annotations'] = annotations
+            texts_serialized.append(text_serialized)
+        data['Texts'] = texts_serialized
+        return data
+
 
 class Text(db.Model):
     __tablename__ = 'Text'
@@ -54,6 +83,13 @@ class Text(db.Model):
 
     def __repr__(self):
         return f'Text {self.content[:20]} from Collection {self.collection}'
+
+    def serialize_dict(self):
+        data = {
+            'Text': self.content,
+            'Discarded': self.discarded
+        }
+        return data
 
 
 class SequenceClassificationTask(db.Model):
@@ -80,12 +116,32 @@ class SequenceClassificationTask(db.Model):
             return self.get_class_label(query[0].class_label)
         return None
 
+    def serialize_dict(self):
+        data = {
+            'Type': 'SequenceClassification',
+            'Name': self.name,
+            'Description': self.description,
+            'Classes': self.get_class_labels()
+        }
+        if self.al_config:
+            data['ActiveLearning'] = ActiveLearningConfigForSequenceClassification \
+                .query.get(self.al_config).serialize_dict()
+        return data
+
 
 class ActiveLearningConfigForSequenceClassification(db.Model):
     __tablename__ = "ActiveLearningConfigForSequenceClassification"
     id = db.Column(db.Integer, primary_key=True)
     start = db.Column(db.Integer, default=1, nullable=False)
     model_name = db.Column(db.String, nullable=False)
+
+    def serialize_dict(self):
+        data = {
+            'Start': self.start,
+            'ModelName': self.model_name
+        }
+        return data
+
 
 
 class SeqClassificationTaskToClasses(db.Model):
@@ -102,6 +158,13 @@ class SequenceClassificationAnnotation(db.Model):
     seq_task = db.Column(db.Integer, db.ForeignKey('SequenceClassificationTask.id'), nullable=False)
     class_label = db.Column(db.Integer, db.ForeignKey('SeqClassificationTaskToClasses.id'), nullable=False)
     created = db.Column(db.DateTime, default=datetime.utcnow)
+
+    def serialize_dict(self):
+        data = {
+            'TaskName': SequenceClassificationTask.query.get(self.seq_task).name,
+            'Class': SeqClassificationTaskToClasses.query.get(self.class_label).class_label
+        }
+        return data
 
 
 class TextQueue(db.Model):
