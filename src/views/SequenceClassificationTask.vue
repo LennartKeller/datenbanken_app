@@ -1,11 +1,11 @@
 <template>
-  <div class="container is-vcentered">
-    <section class="column">
+  <div class="container">
+    <section>
       <b-field>
             <b-radio-button v-for="cls in classes" v-bind:key="cls" v-model="selectedClass" :native-value="cls"
-                type="is-primary is-light is-outlined">
+                type="is-primary is-light is-outlined is-success" v>
                 <b-icon v-if="selectedClass === cls" icon="check"></b-icon>
-                <span>{{cls}}</span>
+                {{cls}}
             </b-radio-button>
       </b-field>
     </section>

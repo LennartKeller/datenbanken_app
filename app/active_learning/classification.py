@@ -10,8 +10,8 @@ class LogRegUncertainty(BaseActiveLearningComponent):
 
     def __init__(self):
         self.pipeline = make_pipeline(
-            TfidfVectorizer(stop_words='english', max_features=200000),
-            SGDClassifier(loss='log', penalty='l2')
+            TfidfVectorizer(stop_words='english', max_features=5000),
+            SGDClassifier(loss='log', penalty='l2', random_state=42)
         )
 
     def fit(self, X, y):
