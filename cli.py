@@ -121,6 +121,31 @@ def from_json(filename):
     click.echo(f"Imported collection {collection_config['Name']} with {len(texts)} into the application.")
 
 
-cli = click.CommandCollection(sources=[db_handling, create_collection])
+@click.group()
+def write_collection():
+    pass
+
+
+@write_collection.command()
+@click.option('-name')
+@click.option('--only-annotated-texts', is_flag=True)
+@click.argument('filename', type=click.Path(exists=False))
+def to_json(name, filename, only_annotated_texts):
+    with app.app_context():
+        collection_query = list(Collection.query.filter_by(name=name))
+        if not collection_query:
+            click.echo(f"No collection with name {name} in database")
+            return
+        collection = collection_query[0]
+        with open(filename, 'w') as f:
+            data = collection.serialize_dict()
+            if only_annotated_texts:
+                texts = [entry for entry in data['Texts'] if entry['Annotations']]
+                data['Texts'] = texts
+            json.dump(data, f, indent=4)
+        click.echo(f'Created output file {filename}')
+
+
+cli = click.CommandCollection(sources=[db_handling, create_collection, write_collection])
 if __name__ == '__main__':
     cli()

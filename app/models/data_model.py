@@ -53,7 +53,7 @@ class Collection(db.Model):
         # Serialiaize tasks
         all_tasks = list(flatten([list(tasks) for tasks in self.get_tasks().values()]))
         all_tasks_serialized = [task.serialize_dict() for task in all_tasks]
-        data['Tasks'] = all_tasks_serialized
+        data['Config']['Tasks'] = all_tasks_serialized
 
         # Get text and Annotations
         texts = Text.query.filter_by(collection=self.id)

@@ -1,0 +1,119 @@
+{
+    "Config": {
+        "Name": "IMDB-Reviews",
+        "Tasks": [
+            {
+                "Type": "SequenceClassification",
+                "Name": "Sentiment",
+                "Description": "Decide if the review is <b> positive <b> or <b> negative </b>.",
+                "Classes": [
+                    "Negative",
+                    "Positive"
+                ],
+                "ActiveLearning": {
+                    "Start": 1,
+                    "ModelName": "LogRegUncertainty"
+                }
+            },
+            {
+                "Type": "SequenceClassification",
+                "Name": "Strength of rating",
+                "Description": "Decide if the rating is carried out strongly or weakly.",
+                "Classes": [
+                    "Strong",
+                    "Weak"
+                ],
+                "ActiveLearning": {
+                    "Start": 1,
+                    "ModelName": "LogRegUncertainty"
+                }
+            }
+        ]
+    },
+    "Texts": [
+        {
+            "Text": "Broadcast News {dir. James L. Brooks, 1987} <br /><br />****/**** <br /><br />Although it lacks the emotional punch of Brooks's debut feature, (Terms of Endearment) Broadcast News is a superlative film, with exceptional performances from each of the three leads and a script that feels as genuine and well-researched as a hard-hitting news report. Let it be known, this is a character film first and foremost and a satire second. In my mind it succeeds on both levels on its own terms. The film's characters are given surprising depth and dimension , while the satire remains sly and never bitter. Comparisons to Network are unnecessary because the films have two completely separate goals and attitudes. While also a great film, Network is a cynical and weary work; in other words, its mad as hell and fed up with the state of television. Network's style of satire feels more extreme and guerrilla. In contrast, the characters populating the news rooms of Broadcast News love and live for their jobs (sometimes to the detriment of their love lives.) They derive pleasure from the stresses and satisfactions of news reporting, just as the audience derives pleasure from watching this sweet and romantically realistic masterpiece.",
+            "Discarded": false,
+            "Annotations": [
+                {
+                    "TaskName": "Sentiment",
+                    "Class": "Positive"
+                },
+                {
+                    "TaskName": "Strength of rating",
+                    "Class": "Strong"
+                }
+            ]
+        },
+        {
+            "Text": "This movie might be o.k. if not for all the language in it. I think that the storyline itself isn't bad, but I would be too embarrassed to let my wife or kids see the movie. I know that kids will learn all the swear words along the way eventually, that's true, but parents should not assist them in the process by letting them see and hear the stuff in the guise of entertainment.<br /><br />I used to quite like Robert Loggia; he has a distinctive gritty quality with that rough voice of his, but in the last few years all I have seen him do are roles with a lot of language in them. If we had an award for over-use of the F word, he would have to be a contender. Unfortunately, I think he's now lost me as a fan. When I see his name on movies in future, I will be thinking twice about picking up that title.<br /><br />Look, I'm no prude. I use language sometimes too, in extreme circumstances, but when we're watching a movie it is for the sake of E N T E R T A I N M E N T, something which we hope will bring us some joy and escapism. I do not want to be reminded of what's happening out on the streets in any big city these days, and it's a hassle to have to wonder whether or not a movie is alright for my family to watch.<br /><br />I like Matt Modine too, but it's a pity that he has associated himself with a picture which has let his image down like this. He probably did an o.k. job in the movie, but I turned off about 1/4 of the way through after having had my ears assaulted once too often by others in the cast. Why can't these actors just say no when these scripts ask them to carry on with this gutter language? Once enough actors, (especially the big names), kick up a fuss about it, the writers will stop putting it in the movies!<br /><br />I'm sorry, but I cannot recommend this picture. It's a pity too, because I think it would probably have been alright, if it had been made well enough for decent families to watch! Thank God I only wasted $2.00 on it!",
+            "Discarded": false,
+            "Annotations": [
+                {
+                    "TaskName": "Sentiment",
+                    "Class": "Negative"
+                },
+                {
+                    "TaskName": "Strength of rating",
+                    "Class": "Weak"
+                }
+            ]
+        },
+        {
+            "Text": "me and a coupla friends form university - alberto lopez, dave hall, celina alcock (we graduated from uea, norwich, uk in 1997) still get together and watch b-movies once a month.<br /><br />We are consummate experts in the art of bad movie-making, and this film was quickly placed in the top 10 of awful/brilliant movies.<br /><br />so if you've just got the beers and weed in, and need a film to laugh like a drain at, DROID GUNNER aka PHOENIX 2 is the film for you! Marc Singer is totally aware he's in a turkey of a film here, and milks it for everything he can! Matthius Hues is sublime in his wooden acting and musclebound moronity (is that a word??) as he grunts \"But I want my 20 thousand!\" Pure Shlock Gold! If you liked this, also see: TRANCERS, THE RUNESTONE, DOLLMAN and anything by Charles Band or Fred Olen Ray.....(but be warned: some of their films are completely and utterly without merit and you'll be screaming for those lost hours of your life!!!?!).",
+            "Discarded": false,
+            "Annotations": [
+                {
+                    "TaskName": "Sentiment",
+                    "Class": "Positive"
+                },
+                {
+                    "TaskName": "Strength of rating",
+                    "Class": "Strong"
+                }
+            ]
+        },
+        {
+            "Text": "This is a great British film. A cleverly observed script with many quotable lines, which captures perfectly what magic mushrooms can do to a man over a weekend. As per usual Phil Daniels is excellent along with that most under rated of British actors Geoff Bell. Peter Bowles with a joint hanging out of his mouth is a casting masterstroke and Gary Stretch with his brooding looks brings something strangely atmospheric to the piece. Although it seems to be billed as a biker movie, i think it will find an audience outside of this, purely on the premise that a lot of people have been there done it and got the t-shirt. also A great original soundtrack with a blinding version of Freebird. This really could be a 21st century heir to the famous Ealing comedies. Like the weed in the Welsh fields: it's a grower!",
+            "Discarded": false,
+            "Annotations": [
+                {
+                    "TaskName": "Sentiment",
+                    "Class": "Positive"
+                },
+                {
+                    "TaskName": "Strength of rating",
+                    "Class": "Strong"
+                }
+            ]
+        },
+        {
+            "Text": "Every time I see Nicole I like her more. I love a movie like this. A woman you just won't give up on, but she keeps breaking your heart. First movie I remember seeing like this was Of Human Bondage, the Kim Novak - Laurence Harvey version. The beefs about the correctness of the Russian spoken in this film are petty, it was good enough to fool me or anybody else who can't speak Russian, I'm sure. Funny how people miss the point. The no-goodnik Russian guys were well cast too. Finally, I have to tip my hat to Ben Chaplin, as somebody else noted, he plays a sap with great dignity, and there was definitely some heat between him and Nicole. To think, guys get PAID for that, mind-blowing.",
+            "Discarded": false,
+            "Annotations": [
+                {
+                    "TaskName": "Sentiment",
+                    "Class": "Positive"
+                },
+                {
+                    "TaskName": "Strength of rating",
+                    "Class": "Strong"
+                }
+            ]
+        },
+        {
+            "Text": "I was a little skepticle if I should watch this when it was first shown on CBS. I was one of the many people who were in NYC on that day, I was going to school at Hunter College. I didnt want to see all the devistation and carnage again, but like many I was curious to see what this was all about. Tears came to my eyes watching this documentary. All my memories returned and just the intense images were unbelievable. I bought the DVD on the one year anniversary and watched it a few times. How these guys were able to capture this footage was incredible. If you have not seen this documentary, do yourself a favor and check it out. It is obviously depressing and will bring tears to eyes, but it's an incredible document of this countries darkest hour.",
+            "Discarded": false,
+            "Annotations": [
+                {
+                    "TaskName": "Sentiment",
+                    "Class": "Negative"
+                },
+                {
+                    "TaskName": "Strength of rating",
+                    "Class": "Weak"
+                }
+            ]
+        }
+    ]
+}
