@@ -7,5 +7,5 @@ if __name__ == '__main__':
         data['Texts'] = []
         for idx, line in enumerate(data_file):
             data['Texts'].append(" ".join(line.split()))
-    with open("IMDBCollection.json", "w") as out_file:
+    with open("LargeIMDBCollection.json", "w") as out_file:
         json.dump(data, out_file, indent=4)

@@ -22,7 +22,6 @@ def handle_collection_config(collection_config):
                 alc = t['ActiveLearning']
                 al_config = ActiveLearningConfigForSequenceClassification(
                     start=alc['Start'],
-                    model_path=alc['ModelPath'],
                     model_name=alc['ModelName'],
                 )
                 db.session.add(al_config)

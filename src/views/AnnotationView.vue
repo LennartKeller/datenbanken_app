@@ -1,10 +1,10 @@
 <template>
   <div id="task-view" class="container">
-    <b-message v-if="success" type="is-success" has-icon>Collection finished!</b-message>
-    <div id="tools" v-if="!success">
+    <b-message v-if="finished" type="is-success" has-icon>Collection finished!</b-message>
+    <div id="tools" v-if="!finished && currentTextId !== null">
       <TextBox v-if="currentTextId !== null" v-bind:textId="currentTextId" :key="currentTextId" ref="textBox"></TextBox>
       <SequenceClassificationTask
-          v-if="currentTextId !== null"
+          v-if="!finished && currentTextId !== null"
           v-for="(t, idx) in sequenceClassificationTasks"
           :key="t.id.toString() + currentTextId.toString()"
           :task-id="t.id"
@@ -13,7 +13,7 @@
       />
       <br>
       <b-message v-if="error !== null" type="is-danger" has-icon>{{ error }}</b-message>
-      <div v-if="currentTextId !== null">
+      <div v-if="!finished && currentTextId !== null">
         <b-button v-on:click="onClickDiscard" class="button-text-control" type="is-danger" outlined>
            <b-icon pack="fas" icon="times-circle" size="is-small"></b-icon>
           <span>Discard</span>
@@ -43,7 +43,7 @@ export default {
       currentTextId: null,
       taskList: [],
       error: null,
-      success: false
+      finished: false
     }
   },
   methods: {
@@ -57,8 +57,10 @@ export default {
     },
     popCurrentTextId () {
       console.log(this.currentTextId)
-      this.currentTextId = this.nextTextIds.pop()
-      console.log(this.currentTextId)
+      if (this.nextTextIds.length > 0) {
+        this.currentTextId = this.nextTextIds.pop()
+      }
+      return null
     },
     onClickDiscard () {
       this.discardText()
@@ -113,7 +115,12 @@ export default {
     getNextTextIds () {
       return $backend.fetchNextTextIds(this.collectionId)
         .then(response => { this.nextTextIds = this.nextTextIds.concat(response) })
-        .catch(error => { this.error = error.error })
+        .catch(error => {
+          // Maybe this can be handled in a more elegant way...
+          if (error.response.data.finished === true) {
+            this.finished = true
+          }
+        })
     },
     submitAllTasks () {
       return new Promise(resolve => {

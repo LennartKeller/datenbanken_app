@@ -83,7 +83,6 @@ class ActiveLearningConfigForSequenceClassification(db.Model):
     __tablename__ = "ActiveLearningConfigForSequenceClassification"
     id = db.Column(db.Integer, primary_key=True)
     start = db.Column(db.Integer, default=1, nullable=False)
-    model_path = db.Column(db.String, nullable=False)
     model_name = db.Column(db.String, nullable=False)
 
 

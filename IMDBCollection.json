@@ -11,8 +11,7 @@
                 "ActiveLearning": {
                     "Enabled": true,
                     "Start": 1,
-                    "ModelName": "LogRegUncertainty",
-                    "ModelPath": "app/active_learning/classification.py"
+                    "ModelName": "LogRegUncertainty"
                 }
             },
             {
@@ -24,8 +23,7 @@
                 "ActiveLearning": {
                     "Enabled": true,
                     "Start": 1,
-                    "ModelName": "LogRegUncertainty",
-                    "ModelPath": "app/active_learning/classification.py"
+                    "ModelName": "LogRegUncertainty"
                 }
             }
         ]

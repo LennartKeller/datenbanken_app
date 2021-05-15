@@ -212,7 +212,7 @@ class NextTextResource(Resource):
                         pool_texts_query = list(collection.get_unannotated_texts())
                         pool_texts = [t.content for t in pool_texts_query]
                         if not pool_texts:
-                            return {'error': 'All texts are annoated'}, 404
+                            return {'error': 'All texts are annotated', 'finished': True}, 404
                         train_text_query = list(collection.get_annotated_texts())
                         train_labels = [seq_task.get_annotation(t).class_label for t in train_text_query]
                         if len(set(train_labels)) < 2:
@@ -230,7 +230,7 @@ class NextTextResource(Resource):
         if not queue:
             unannotated_texts = collection.get_unannotated_texts()
             if not unannotated_texts:
-                return {'error': 'All texts are annotated'}, 404
+                return {'error': 'All texts are annotated', 'finished': True}, 404
             queue.append(unannotated_texts[0])
 
         return [entry['id'] for entry in self.text_schema.dump(queue)]
