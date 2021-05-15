@@ -75,7 +75,7 @@ export default {
         this.error = null
         if (this.nextTextIds.length === 0) {
           this.getNextTextIds()
-            .then((resolve) => {
+            .then(() => {
               this.popCurrentTextId()
             })
             .catch((error) => { console.log(error) })
@@ -109,7 +109,7 @@ export default {
     },
     getNextTextIds () {
       return $backend.fetchNextTextIds(this.collectionId)
-        .then(response => { this.nextTextIds.push(...response.map(obj => obj.id)) })
+        .then(response => { this.nextTextIds = this.nextTextIds.concat(response) })
         .catch(error => { this.error = error.error })
     }
   },

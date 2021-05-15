@@ -233,4 +233,4 @@ class NextTextResource(Resource):
                 return {'error': 'All texts are annotated'}, 404
             queue.append(unannotated_texts[0])
 
-        return self.text_schema.dump(queue)
+        return [entry['id'] for entry in self.text_schema.dump(queue)]
