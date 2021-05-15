@@ -1,15 +1,17 @@
 <template>
-  <div class="container">
+  <div class="box has-background-white-bis buttons is-centered">
     <section>
       <b-field>
+        <div class="field-body">
             <b-radio-button v-for="cls in classes" v-bind:key="cls" v-model="selectedClass" :native-value="cls"
-                type="is-primary is-light is-outlined is-success" v>
+                type="is-primary is-light is-outlined is-success">
                 <b-icon v-if="selectedClass === cls" icon="check"></b-icon>
-                {{cls}}
+              <span>{{cls}}</span>
             </b-radio-button>
+        </div>
       </b-field>
     </section>
-  </div>
+    </div>
 </template>
 
 <script>
@@ -51,7 +53,7 @@ export default {
       return this.selectedClass !== null
     }
   },
-  beforeMount () {
+  created () {
     this.getTaskConfig()
   },
   beforeDestroy () {
@@ -63,5 +65,4 @@ export default {
 </script>
 
 <style scoped>
-
 </style>

@@ -3,6 +3,7 @@
     <b-message v-if="finished" type="is-success" has-icon>Collection finished!</b-message>
     <div id="tools" v-if="!finished && currentTextId !== null">
       <TextBox v-if="currentTextId !== null" v-bind:textId="currentTextId" :key="currentTextId" ref="textBox"></TextBox>
+      <br>
       <SequenceClassificationTask
           v-if="!finished && currentTextId !== null"
           v-for="(t, idx) in sequenceClassificationTasks"

@@ -8,6 +8,8 @@ app/db/
 __pycache__/
 *.py[cod]
 *$py.class
+imdb_reviews.txt
+LargeIMDBCollection.json
 
 # C extensions
 *.so
