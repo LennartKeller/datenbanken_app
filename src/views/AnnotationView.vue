@@ -54,9 +54,7 @@ export default {
       return true
     },
     popCurrentTextId () {
-      console.log(this.currentTextId)
       this.currentTextId = this.nextTextIds.pop()
-      console.log(this.currentTextId)
     },
     onClickDiscard () {
       this.discardText()
