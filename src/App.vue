@@ -2,9 +2,7 @@
   <div id="app">
     <div id="nav">
       <router-link to="/">Home</router-link> |
-      <router-link to="/api">API Sample</router-link>|
-      <router-link to="/collection">Collections</router-link>|
-      <router-link :to="{name: 'annotation-view', params: {collectionId: 1}}">Task-View</router-link>
+      <router-link to="/collection">Collections</router-link>
     </div>
     <router-view/>
   </div>

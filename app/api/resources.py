@@ -201,7 +201,7 @@ class NextTextResource(Resource):
         for task_type, tasks in all_tasks.items():
             if task_type == 'SequenceClassification':
                 for seq_task in tasks:
-                    if al_config_id := seq_task.al_config is not None:
+                    if (al_config_id := seq_task.al_config) is not None:
                         # Check if enabled task al comp is not already loaded
                         if f'SeqClass-{al_config_id}' not in self.al_components:
                             al_config = ActiveLearningConfigForSequenceClassification.query.get(al_config_id)

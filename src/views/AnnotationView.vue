@@ -12,8 +12,6 @@
           :ref="'task-' + idx.toString()"
       />
       <br>
-      <p v-on:click="submitAllTasks">Submit</p>
-      <p>{{currentTextId}}</p>
       <b-message v-if="error !== null" type="is-danger" has-icon>{{ error }}</b-message>
       <div v-if="currentTextId !== null">
         <b-button v-on:click="onClickDiscard" class="button-text-control" type="is-danger" outlined>

@@ -97,7 +97,7 @@ class SeqClassificationTaskToClasses(db.Model):
 class SequenceClassificationAnnotation(db.Model):
     __tablename__ = "SequenceClassificationAnnotation"
     id = db.Column(db.Integer, primary_key=True)
-    text = db.Column(db.Integer, db.ForeignKey('Text.id'), unique=True)
+    text = db.Column(db.Integer, db.ForeignKey('Text.id'))
     seq_task = db.Column(db.Integer, db.ForeignKey('SequenceClassificationTask.id'), nullable=False)
     class_label = db.Column(db.Integer, db.ForeignKey('SeqClassificationTaskToClasses.id'), nullable=False)
     created = db.Column(db.DateTime, default=datetime.utcnow)
