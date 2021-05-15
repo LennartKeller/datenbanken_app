@@ -29,7 +29,9 @@ def handle_collection_config(collection_config):
                 # 2. Create Task Config
                 seq_task = SequenceClassificationTask(
                     al_config=al_config.id,
-                    collection=collection.id
+                    collection=collection.id,
+                    name=t['Name'],
+                    description=t['Description']
                 )
                 db.session.add(seq_task)
                 db.session.commit()

@@ -10,6 +10,8 @@
           :key="t.id.toString() + currentTextId.toString()"
           :task-id="t.id"
           :text-id="currentTextId"
+          :name="t.name"
+          :description="t.description"
           :ref="'task-' + idx.toString()"
       />
       <br>

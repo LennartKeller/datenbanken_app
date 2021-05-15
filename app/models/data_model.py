@@ -59,6 +59,8 @@ class Text(db.Model):
 class SequenceClassificationTask(db.Model):
     __tablename__ = "SequenceClassificationTask"
     id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(120), nullable=False)
+    description = db.Column(db.Text, nullable=False)
     al_config = db.Column(db.Integer, db.ForeignKey('ActiveLearningConfigForSequenceClassification.id'))
     collection = db.Column(db.Integer, db.ForeignKey('Collection.id'), nullable=False)
 

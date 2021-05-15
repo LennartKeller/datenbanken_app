@@ -1,5 +1,22 @@
 <template>
-  <div class="box has-background-white-bis buttons is-centered">
+  <div class="box has-background-white-bis">
+  <div class="card">
+    <div class="card">
+      <div class="card-header" v-on:click="infoBoxOpen = !infoBoxOpen">
+          <p class="card-header-title">
+            {{ name }}
+          </p>
+          <a class="card-header-icon">
+            <b-icon
+                :icon="infoBoxOpen ? 'menu-down' : 'menu-up'">
+            </b-icon>
+          </a>
+      </div>
+      <div class="card-content center" v-html="description" v-if="infoBoxOpen"/>
+    </div>
+  </div>
+  <br/>
+  <div class="has-background-white-bis buttons is-centered">
     <section>
       <b-field>
         <div class="field-body">
@@ -12,6 +29,7 @@
       </b-field>
     </section>
     </div>
+    </div>
 </template>
 
 <script>
@@ -19,12 +37,13 @@ import $backend from '../backend'
 
 export default {
   name: 'SequenceClassificationTask',
-  props: ['taskId', 'textId'],
+  props: ['taskId', 'textId', 'name', 'description'],
   data () {
     return {
       config: {},
       selectedClass: null,
-      error: null
+      error: null,
+      infoBoxOpen: false
     }
   },
   computed: {

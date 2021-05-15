@@ -31,6 +31,8 @@ __Note__: Currently only sequence classification is available as task-type.
         "Tasks": [
             {
                 "Type": "SequenceClassification",
+                "Name": "Task-1",
+                "Description": "Short task description for annotators.",
                 "Classes": [
                     "Negative",
                     "Positive"

@@ -4,6 +4,8 @@
         "Tasks": [
             {
                 "Type": "SequenceClassification",
+                "Name": "Sentiment",
+                "Description": "Decide if the review is <b> positive <b> or <b> negative </b>.",
                 "Classes": [
                     "Negative",
                     "Positive"
@@ -16,6 +18,8 @@
             },
             {
                 "Type": "SequenceClassification",
+                "Name": "Strength of rating",
+                "Description": "Decide if the rating is carried out strongly or weakly.",
                 "Classes": [
                     "Strong",
                     "Weak"
