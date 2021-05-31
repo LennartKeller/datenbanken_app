@@ -3,52 +3,12 @@ import json
 from pathlib import Path
 
 from app.models import *
-from app.tools import collection_to_dict
+from app.tools import collection_to_dict, handle_collection_config
 from app import app
 
 def abort_if_false(ctx, param, value):
     if not value:
         ctx.abort()
-
-def handle_collection_config(collection_config):
-    with app.app_context():
-        collection = Collection(
-            name=collection_config['Name']
-        )
-        db.session.add(collection)
-        db.session.add(collection)
-        for t in collection_config['Tasks']:
-            if t['Type'] == "SequenceClassification":
-                # 1. Create Active Learning Stuff
-                alc = t['ActiveLearning']
-                al_config = ActiveLearningConfigForSequenceClassification(
-                    start=alc['Start'],
-                    model_name=alc['ModelName'],
-                )
-                db.session.add(al_config)
-                db.session.commit()
-                # 2. Create Task Config
-                seq_task = SequenceClassificationTask(
-                    al_config=al_config.id,
-                    collection=collection.id,
-                    name=t['Name'],
-                    description=t['Description']
-                )
-                db.session.add(seq_task)
-                db.session.commit()
-                # Map classes to class config
-                for class_label in t['Classes']:
-                    task2class = SeqClassificationTaskToClasses(
-                        seq_class_task=seq_task.id,
-                        class_label=class_label
-                    )
-                    db.session.add(task2class)
-                db.session.commit()
-
-
-        db.session.add(collection)
-        db.session.commit()
-        return collection.id
 
 
 def create_texts_from_list(collection_data, collection_id):
@@ -109,8 +69,8 @@ def from_json(filename):
     except KeyError:
         click.echo("Invalid collection src. Missing data section!")
         return
-
-    collection_id = handle_collection_config(collection_config)
+    with app.app_context():
+        collection_id = handle_collection_config(collection_config)
 
     if isinstance(collection_data, list):
         texts = create_texts_from_list(collection_data, collection_id)
