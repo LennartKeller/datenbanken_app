@@ -18,6 +18,39 @@
         </router-link>
       </div>
     </div>
+    <br>
+    <div class="columns is-mobile">
+      <div class="column is-half is-offset-one-quarter">
+        <div class="box">
+      <b-field class="file">
+        <b-upload v-model="file" expanded>
+          <a class="button is-primary is-fullwidth">
+            <b-icon icon="upload"></b-icon>
+            <span>{{ file.name || "Click to upload"}}</span>
+          </a>
+        </b-upload>
+      </b-field>
+      <b-field>
+        <b-upload v-model="dropFiles" multiple drag-drop expanded>
+          <section class="section">
+            <div class="content has-text-centered">
+              <p>
+                <b-icon icon="upload" size="is-large"></b-icon>
+              </p>
+              <p>Drop your files here or click to upload</p>
+            </div>
+          </section>
+        </b-upload>
+      </b-field>
+      <div class="tags">
+        <span v-for="(file, index) in dropFiles" :key="index" class="tag is-primary">
+          {{file.name}}
+          <button class="delete is-small" type="button" @click="deleteDropFile(index)"></button>
+        </span>
+      </div>
+    </div>
+      </div>
+    </div>
     <b-message v-if="error !== null" type="is-danger" has-icon>{{error}}</b-message>
   </div>
 </template>
@@ -30,7 +63,9 @@ export default {
   data () {
     return {
       collectionList: null,
-      error: null
+      error: null,
+      file: {},
+      dropFiles: []
     }
   },
   methods: {
@@ -38,6 +73,9 @@ export default {
       $backend.fetchCollectionList()
         .then(response => { this.collectionList = response })
         .catch(error => { this.error.messagge = error })
+    },
+    deleteDropFile (index) {
+      this.dropFiles.splice(index, 1)
     }
   },
   beforeMount () {
