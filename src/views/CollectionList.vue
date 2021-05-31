@@ -22,14 +22,6 @@
     <div class="columns is-mobile">
       <div class="column is-half is-offset-one-quarter">
         <div class="box">
-      <b-field class="file">
-        <b-upload v-model="file" expanded>
-          <a class="button is-primary is-fullwidth">
-            <b-icon icon="upload"></b-icon>
-            <span>{{ file.name || "Click to upload"}}</span>
-          </a>
-        </b-upload>
-      </b-field>
       <b-field>
         <b-upload v-model="dropFiles" multiple drag-drop expanded>
           <section class="section">
@@ -48,9 +40,16 @@
           <button class="delete is-small" type="button" @click="deleteDropFile(index)"></button>
         </span>
       </div>
+      <div class="upload-button-container">
+        <b-button id="upload-button" size="is-medium" v-if="dropFiles.length > 0" icon-left="upload">
+         <!--<b-icon icon="upload" size="is-small"></b-icon>-->
+          Upload
+        </b-button>
+      </div>
     </div>
       </div>
     </div>
+    <p>{{dropFiles}}</p>
     <b-message v-if="error !== null" type="is-danger" has-icon>{{error}}</b-message>
   </div>
 </template>
@@ -76,6 +75,9 @@ export default {
     },
     deleteDropFile (index) {
       this.dropFiles.splice(index, 1)
+    },
+    uploadAllFiles () {
+
     }
   },
   beforeMount () {
