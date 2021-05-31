@@ -3,6 +3,7 @@ import json
 from pathlib import Path
 
 from app.models import *
+from app.tools import collection_to_dict
 from app import app
 
 def abort_if_false(ctx, param, value):
@@ -127,9 +128,9 @@ def write_collection():
 
 
 @write_collection.command()
-@click.option('-name')
+@click.option('--name', '-n', required=True)
 @click.option('--only-annotated-texts', is_flag=True)
-@click.argument('filename', type=click.Path(exists=False))
+@click.argument('filename', type=click.File('w'))
 def to_json(name, filename, only_annotated_texts):
     with app.app_context():
         collection_query = list(Collection.query.filter_by(name=name))
@@ -137,13 +138,9 @@ def to_json(name, filename, only_annotated_texts):
             click.echo(f"No collection with name {name} in database")
             return
         collection = collection_query[0]
-        with open(filename, 'w') as f:
-            data = collection.serialize_dict()
-            if only_annotated_texts:
-                texts = [entry for entry in data['Texts'] if entry['Annotations']]
-                data['Texts'] = texts
-            json.dump(data, f, indent=4)
-        click.echo(f'Created output file {filename}')
+        data = collection_to_dict(collection, only_annotated_texts=only_annotated_texts)
+        json.dump(data, filename)
+        click.echo(f'Created output file {filename.name}')
 
 
 cli = click.CommandCollection(sources=[db_handling, create_collection, write_collection])
