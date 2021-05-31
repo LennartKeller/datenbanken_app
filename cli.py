@@ -3,28 +3,12 @@ import json
 from pathlib import Path
 
 from app.models import *
-from app.tools import collection_to_dict, handle_collection_config
+from app.tools import collection_to_dict, handle_collection_config, create_texts_from_list
 from app import app
 
 def abort_if_false(ctx, param, value):
     if not value:
         ctx.abort()
-
-
-def create_texts_from_list(collection_data, collection_id):
-    with app.app_context():
-        texts = []
-        for idx, t in enumerate(collection_data):
-            text = Text(
-                collection=collection_id,
-                index=idx,
-                content=t,
-            )
-            db.session.add(text)
-            texts.append(texts)
-        db.session.commit()
-        return texts
-
 
 @click.group()
 def db_handling():
@@ -73,8 +57,8 @@ def from_json(filename):
         collection_id = handle_collection_config(collection_config)
 
     if isinstance(collection_data, list):
-        texts = create_texts_from_list(collection_data, collection_id)
-        pass
+        with app.app_context():
+            texts = create_texts_from_list(collection_data, collection_id)
     else:
         texts = []
         click.echo("Not implemented now.")

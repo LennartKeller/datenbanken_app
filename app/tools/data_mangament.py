@@ -5,7 +5,8 @@ from ..models import \
     db, \
     SeqClassificationTaskToClasses, \
     SequenceClassificationTask, \
-    ActiveLearningConfigForSequenceClassification
+    ActiveLearningConfigForSequenceClassification,\
+    Text
 
 
 def collection_to_dict(collection, only_annotated_texts=False):
@@ -72,3 +73,26 @@ def handle_collection_config(collection_config: Dict):
     db.session.add(collection)
     db.session.commit()
     return collection.id
+
+def create_texts_from_list(collection_data, collection_id):
+    """
+    Inserts text from a collection configuration into the db.
+
+    Args:
+        collection_data: Lists of texts to insert
+        collection_id: db-Id of the collection configuration
+
+    Returns:
+        List of Texts db-objects
+    """
+    texts = []
+    for idx, t in enumerate(collection_data):
+        text = Text(
+            collection=collection_id,
+            index=idx,
+            content=t,
+        )
+        db.session.add(text)
+        texts.append(texts)
+    db.session.commit()
+    return texts
