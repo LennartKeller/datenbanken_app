@@ -5,7 +5,7 @@ from ..models import \
     db, \
     SeqClassificationTaskToClasses, \
     SequenceClassificationTask, \
-    ActiveLearningConfigForSequenceClassification,\
+    ActiveLearningConfigForSequenceClassification, \
     Text
 
 
@@ -74,6 +74,7 @@ def handle_collection_config(collection_config: Dict):
     db.session.commit()
     return collection.id
 
+
 def create_texts_from_list(collection_data, collection_id):
     """
     Inserts text from a collection configuration into the db.
@@ -96,3 +97,6 @@ def create_texts_from_list(collection_data, collection_id):
         texts.append(texts)
     db.session.commit()
     return texts
+
+def create_texts_from_read_config(read_config):
+    

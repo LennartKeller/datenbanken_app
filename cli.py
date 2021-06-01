@@ -38,10 +38,10 @@ def create_collection():
     pass
 
 @create_collection.command()
-@click.argument('filename', type=click.Path(exists=True))
+@click.argument('filename', type=click.File('r'))
 def from_json(filename):
-    with open(filename) as collection_src_f:
-        collection_src = json.load(collection_src_f)
+
+    collection_src = json.load(filename)
     try:
         collection_config = collection_src['Config']
     except KeyError:
