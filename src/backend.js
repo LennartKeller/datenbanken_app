@@ -69,5 +69,9 @@ export default {
   postCollectionFileUpload (fileObject) {
     return $axios.post('collection/add', fileObject, {headers: {'Content-Type': 'multipart/form-data'}})
       .then(response => response.data)
+  },
+  getCollectionProgress (collectionId) {
+    return $axios.get('collection/' + collectionId.toString() + '/progress')
+      .then(response => response.data)
   }
 }

@@ -20,7 +20,7 @@
                 </span>
                </a>
               <router-link :to="{name: 'annotation-view', params: {collectionId: collection.id}}"><span>{{collection.name}}</span></router-link>
-              <!--<CollectionProgressBar></CollectionProgressBar>-->
+              <CollectionProgressBar :collection-id="collection.id" :key="collection.id"></CollectionProgressBar>
             </p>
           </header>
       </div>
@@ -32,7 +32,10 @@
           <section class="hero">
             <div class="hero-body">
               <p class="title">
-                Upload
+                Add
+              </p>
+              <p class="subtitle">
+                Upload new collections.
               </p>
             </div>
           </section>
@@ -43,7 +46,7 @@
               <p>
                 <b-icon icon="upload" size="is-large"></b-icon>
               </p>
-              <p>Drop your files here or click to upload</p>
+              <p>Drop your collection-configurations here.</p>
             </div>
           </section>
         </b-upload>

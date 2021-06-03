@@ -280,3 +280,13 @@ class DownloadCollectionResource(Resource):
                 attachment_filename=f'{"-".join(collection_name.split())}.json'
             )
 
+
+@api_rest.route('/collection/<int:collection_id>/progress')
+class CollectionProgressResource(Resource):
+    def get(self, collection_id):
+        collection = Collection.query.get(collection_id)
+        if collection is None:
+            return {'error': f'{collection_id} is not a valid CollectionID'}, 404
+        n_annotated = len(collection.get_annotated_texts())
+        n_unannotated = len(collection.get_unannotated_texts())
+        return {'annotated': n_annotated, 'unannotated': n_unannotated}, 200
