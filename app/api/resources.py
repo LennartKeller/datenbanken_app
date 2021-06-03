@@ -5,7 +5,9 @@ TODO Refactor into a fully fledged REST-API
 """
 import os
 import tempfile
-from io import TextIOWrapper, BytesIO
+import time
+
+from flask import current_app
 from flask import request
 from flask_restx import Resource
 
@@ -226,11 +228,14 @@ class NextTextResource(Resource):
                         if len(train_texts) < 2:
                             break
 
-                        print("Querying using active learning")
+
                         component = self.al_components[f'SeqClass-{al_config_id}']
+                        start = time.time()
                         component.fit(train_texts, train_labels)
                         idx = component.rank(pool_texts)[0]
                         queue.append(pool_texts_query[idx])
+                        time_delta = time.time() - start
+                        current_app.logger.info(f'Querying using active learning. Took {time_delta} seconds')
 
         if not queue:
             unannotated_texts = collection.get_unannotated_texts()
@@ -255,4 +260,3 @@ class UploadCollectionResource(Resource):
             cli_stream = os.popen(f'python cli.py from-json {tmp.name}')
             output = cli_stream.read()
             return {'message': output}, 200
-
