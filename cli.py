@@ -46,36 +46,38 @@ def create_collection():
 @create_collection.command()
 @click.argument('filename', type=click.File('r'))
 def from_json(filename):
-    collection_src = json.load(filename)
-    try:
-        collection_config = collection_src['Config']
-    except KeyError:
-        click.echo("Invalid collection src. Missing config section!")
-        return
-
-    try:
-        collection_data = collection_src['Texts']
-    except KeyError:
-        click.echo("Invalid collection src. Missing data section!")
-        return
     with app.app_context():
+        collection_src = json.load(filename)
+        try:
+            collection_config = collection_src['Config']
+        except KeyError:
+            click.echo("Invalid collection src. Missing config section!")
+            return
+
+        try:
+            collection_data = collection_src['Texts']
+        except KeyError:
+            click.echo("Invalid collection src. Missing data section!")
+            return
+
         collection_id = handle_collection_config(collection_config)
 
-    if isinstance(collection_data, list):
-        with app.app_context():
-            texts = create_texts_from_list(collection_data, collection_id)
-    elif isinstance(collection_data, dict):
-        with app.app_context():
+        if isinstance(collection_data, list):
+            try:
+                texts = create_texts_from_list(collection_data, collection_id)
+            except Exception as e:
+                click.echo(e)
+                return
+        elif isinstance(collection_data, dict):
             try:
                 texts = create_texts_from_read_config(collection_data, collection_id)
             except Exception as e:
                 click.echo(e)
                 return
 
-    # Finally commit all changes to the db
-    with app.app_context():
+        # Finally commit all changes to the db
         db.session.commit()
-    click.echo(f"Imported collection {collection_config['Name']} with {len(texts)} into the application.")
+        click.echo(f"Imported collection {collection_config['Name']} with {len(texts)} into the application.")
 
 
 @click.group()

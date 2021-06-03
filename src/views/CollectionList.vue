@@ -41,8 +41,11 @@
         </span>
       </div>
       <div class="upload-button-container">
-        <b-button id="upload-button" size="is-medium" v-if="dropFiles.length > 0" icon-left="upload">
-         <!--<b-icon icon="upload" size="is-small"></b-icon>-->
+        <b-button id="upload-button"
+                  size="is-medium"
+                  icon-left="upload"
+                  v-if="dropFiles.length > 0"
+                  v-on:click="uploadAllFiles">
           Upload
         </b-button>
       </div>
@@ -77,7 +80,25 @@ export default {
       this.dropFiles.splice(index, 1)
     },
     uploadAllFiles () {
-
+      for (let key in this.dropFiles) {
+        if (this.dropFiles.hasOwnProperty(key)) {
+          console.log('Upload file ' + key)
+          console.log(this.dropFiles[key])
+          let formData = new FormData()
+          formData.append('file', this.dropFiles[key])
+          console.log(formData)
+          this.uploadFile(formData)
+        }
+      }
+    },
+    uploadFile (fileObject) {
+      $backend.postCollectionFileUpload(fileObject)
+        .then(() => {
+          this.getCollectionList()
+        })
+        .catch((error) => {
+          this.error = error
+        })
     }
   },
   beforeMount () {

@@ -65,6 +65,10 @@ export default {
   fetchNextTextIds (collectionId) {
     return $axios.get('collection/' + collectionId.toString() + '/next')
       .then(response => response.data)
+  },
+  postCollectionFileUpload (fileObject) {
+    return $axios.post('collection/add', fileObject)
+      .then(response => response.data)
   }
 
 }

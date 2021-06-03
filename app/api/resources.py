@@ -1,6 +1,7 @@
 """
 REST API Resource Routing
 http://flask-restplus.readthedocs.io
+TODO Refactor into a fully fledged REST-API
 """
 
 from flask import request
@@ -234,3 +235,11 @@ class NextTextResource(Resource):
             queue.append(unannotated_texts[0])
 
         return list(set([entry['id'] for entry in self.text_schema.dump(queue)]))
+
+
+@api_rest.route('/collection/add')
+class UploadCollectionResource(Resource):
+
+    def post(self):
+        #file_data = request.form['file']
+        print(request.form)
