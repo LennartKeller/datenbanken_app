@@ -70,5 +70,4 @@ export default {
     return $axios.post('collection/add', fileObject, {headers: {'Content-Type': 'multipart/form-data'}})
       .then(response => response.data)
   }
-
 }

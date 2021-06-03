@@ -9,13 +9,19 @@
 </section>
     <div id="collection-list" class="container">
       <div class="card collection-card" v-for="collection in collectionList" :key="collection.id">
-        <router-link :to="{name: 'annotation-view', params: {collectionId: collection.id}}">
           <header class="card-header">
-            <p class="card-header-title"  >
-             {{collection.name}}
+            <p class="card-header-title">
+              <a :href="'/api/collection/' + collection.id.toString() + '/download'">
+                <span class="download-button">
+                  <b-icon
+                      pack="fas"
+                      icon="download"
+                      size="is-small"/>
+                </span>
+               </a>
+              <router-link :to="{name: 'annotation-view', params: {collectionId: collection.id}}"><span>{{collection.name}}</span></router-link>
             </p>
           </header>
-        </router-link>
       </div>
     </div>
     <br>
@@ -111,5 +117,6 @@ export default {
 </script>
 
 <style scoped>
-  .collection-card {padding: 0.5em;}
+  .collection-card {margin: 0.5em;}
+  .download-button {margin-right: 1em;}
 </style>
