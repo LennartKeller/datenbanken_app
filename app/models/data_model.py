@@ -1,6 +1,7 @@
-import json
 from datetime import datetime
+
 from more_itertools import flatten
+
 from . import db
 
 
@@ -63,8 +64,8 @@ class Collection(db.Model):
             annotations = []
             for task in all_tasks:
                 # 1. Query for SeqClass Annotations
-                seq_class_annotation = list(SequenceClassificationAnnotation.query\
-                    .filter_by(text=text.id, seq_task=task.id))
+                seq_class_annotation = list(SequenceClassificationAnnotation.query \
+                                            .filter_by(text=text.id, seq_task=task.id))
                 annotations.extend([annotation.serialize_dict() for annotation in seq_class_annotation])
             text_serialized = text.serialize_dict()
             text_serialized['Annotations'] = annotations
@@ -141,7 +142,6 @@ class ActiveLearningConfigForSequenceClassification(db.Model):
             'ModelName': self.model_name
         }
         return data
-
 
 
 class SeqClassificationTaskToClasses(db.Model):

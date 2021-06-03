@@ -1,14 +1,18 @@
-import click
 import json
 from pathlib import Path
 
-from app.models import *
-from app.tools import collection_to_dict, handle_collection_config, create_texts_from_list, create_texts_from_read_config
+import click
+
 from app import app, db
+from app.models import *
+from app.tools import collection_to_dict, handle_collection_config, create_texts_from_list, \
+    create_texts_from_read_config
+
 
 def abort_if_false(ctx, param, value):
     if not value:
         ctx.abort()
+
 
 @click.group()
 def db_handling():
@@ -24,6 +28,7 @@ def init_db():
     with app.app_context():
         db.create_all()
 
+
 @db_handling.command()
 @click.option('--yes', is_flag=True, callback=abort_if_false,
               expose_value=False,
@@ -37,10 +42,10 @@ def drop_db():
 def create_collection():
     pass
 
+
 @create_collection.command()
 @click.argument('filename', type=click.File('r'))
 def from_json(filename):
-
     collection_src = json.load(filename)
     try:
         collection_config = collection_src['Config']

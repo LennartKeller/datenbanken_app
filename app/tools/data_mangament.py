@@ -1,5 +1,5 @@
-from typing import Dict, List
 from pathlib import Path
+from typing import Dict, List
 
 from ..models import \
     Collection, \
@@ -8,7 +8,6 @@ from ..models import \
     SequenceClassificationTask, \
     ActiveLearningConfigForSequenceClassification, \
     Text
-
 from ..validation import DataReaderValidator, READER_CONFIG_SCHEMA, DataReaderValidationException
 
 

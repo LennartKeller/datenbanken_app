@@ -1,5 +1,6 @@
-from cerberus import Validator
 from pathlib import Path
+
+from cerberus import Validator
 
 
 class DataReaderValidator(Validator):
