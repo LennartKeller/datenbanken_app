@@ -7,7 +7,7 @@ import os
 import tempfile
 import time
 
-from flask import current_app
+from flask import current_app, send_file
 from flask import request
 from flask_restx import Resource
 
@@ -260,3 +260,23 @@ class UploadCollectionResource(Resource):
             cli_stream = os.popen(f'python cli.py from-json {tmp.name}')
             output = cli_stream.read()
             return {'message': output}, 200
+
+
+@api_rest.route('/collection/<int:collection_id>/download')
+class DownloadCollectionResource(Resource):
+
+    def get(self, collection_id):
+        collection = Collection.query.get(collection_id)
+        if collection is None:
+            return {'error': f'{collection_id} is not a valid CollectionID'}, 404
+        with tempfile.NamedTemporaryFile('w') as tmp:
+            collection_name = collection.name
+            stream = os.popen(f'python cli.py to-json -n {collection_name} {tmp.name}')
+            _ = stream.read()
+            current_app.logger.info(f'Wrote JSON data for collection {collection_name} to temp file {tmp.name}')
+            return send_file(
+                tmp.name,
+                as_attachment=True,
+                attachment_filename=f'{"-".join(collection_name.split())}.json'
+            )
+
