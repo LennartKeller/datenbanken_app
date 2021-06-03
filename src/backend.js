@@ -67,7 +67,7 @@ export default {
       .then(response => response.data)
   },
   postCollectionFileUpload (fileObject) {
-    return $axios.post('collection/add', fileObject)
+    return $axios.post('collection/add', fileObject, {headers: {'Content-Type': 'multipart/form-data'}})
       .then(response => response.data)
   }
 

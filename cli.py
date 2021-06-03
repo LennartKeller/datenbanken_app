@@ -59,8 +59,11 @@ def from_json(filename):
     except KeyError:
         click.echo("Invalid collection src. Missing data section!")
         return
-
-    collection_id = handle_collection_config(collection_config)
+    try:
+        collection_id = handle_collection_config(collection_config)
+    except Exception as e:
+        click.echo(e)
+        return
 
     if isinstance(collection_data, list):
         try:

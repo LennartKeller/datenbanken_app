@@ -22,6 +22,13 @@
     <div class="columns is-mobile">
       <div class="column is-half is-offset-one-quarter">
         <div class="box">
+          <section class="hero">
+            <div class="hero-body">
+              <p class="title">
+                Upload
+              </p>
+            </div>
+          </section>
       <b-field>
         <b-upload v-model="dropFiles" multiple drag-drop expanded>
           <section class="section">
@@ -52,7 +59,6 @@
     </div>
       </div>
     </div>
-    <p>{{dropFiles}}</p>
     <b-message v-if="error !== null" type="is-danger" has-icon>{{error}}</b-message>
   </div>
 </template>
@@ -80,20 +86,17 @@ export default {
       this.dropFiles.splice(index, 1)
     },
     uploadAllFiles () {
-      for (let key in this.dropFiles) {
-        if (this.dropFiles.hasOwnProperty(key)) {
-          console.log('Upload file ' + key)
-          console.log(this.dropFiles[key])
-          let formData = new FormData()
-          formData.append('file', this.dropFiles[key])
-          console.log(formData)
-          this.uploadFile(formData)
-        }
+      while (this.dropFiles.length > 0) {
+        let file = this.dropFiles.pop()
+        let formData = new FormData()
+        formData.append('file', file)
+        this.uploadFile(formData)
       }
     },
     uploadFile (fileObject) {
       $backend.postCollectionFileUpload(fileObject)
-        .then(() => {
+        .then((response) => {
+          this.$buefy.dialog.alert(response.message)
           this.getCollectionList()
         })
         .catch((error) => {

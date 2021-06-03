@@ -3,7 +3,9 @@ REST API Resource Routing
 http://flask-restplus.readthedocs.io
 TODO Refactor into a fully fledged REST-API
 """
-
+import os
+import tempfile
+from io import TextIOWrapper, BytesIO
 from flask import request
 from flask_restx import Resource
 
@@ -241,5 +243,14 @@ class NextTextResource(Resource):
 class UploadCollectionResource(Resource):
 
     def post(self):
-        #file_data = request.form['file']
-        print(request.form)
+        """
+        TODO it would yield multiple advantages to further refactor the cli tool
+        and to call the creation function directly from here but for now it works quite well...
+        """
+        file = request.files['file']
+        with tempfile.NamedTemporaryFile('wb') as tmp:
+            tmp.write(file.read())
+            cli_stream = os.popen(f'python cli.py from-json {tmp.name}')
+            output = cli_stream.read()
+            return {'message': output}, 200
+
