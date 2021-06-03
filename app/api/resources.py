@@ -141,7 +141,9 @@ class SingleAnnotationEndpoint(Resource):
             db.session.delete(existing_annotation[0])
             db.session.commit()
 
-        class_label_obj = list(SeqClassificationTaskToClasses.query.filter_by(class_label=class_label))[0]
+        class_label_obj = list(
+            SeqClassificationTaskToClasses.query.filter_by(class_label=class_label, seq_class_task=task_id)
+        )[0]
         annotation = SequenceClassificationAnnotation(
             text=text_id,
             seq_task=task_id,

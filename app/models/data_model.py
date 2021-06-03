@@ -33,13 +33,12 @@ class Collection(db.Model):
         for task_type, tasks in all_tasks.items():
             if task_type == 'SequenceClassification':
                 for task in tasks:
-                    task_texts = list(
-                        Text.query.join(
-                            SequenceClassificationAnnotation,
-                            Text.id == SequenceClassificationAnnotation.text and SequenceClassificationAnnotation.seq_task == task.id
-                        )
+                    query = list(
+                        db.session.query(Text, SequenceClassificationAnnotation)
+                            .filter(Text.id == SequenceClassificationAnnotation.text)
+                            .filter(SequenceClassificationAnnotation.seq_task == task.id).all()
                     )
-
+                    task_texts = [row[0] for row in query]
                     task_texts = set(task_texts)
                     annotated_texts.update(task_texts)
             # More Tasks here
