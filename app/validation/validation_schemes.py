@@ -1,4 +1,4 @@
-READ_CONFIG_SCHEMA = {
-    'Seperator': {'type': 'string'},
-    'Path': {''}
+READER_CONFIG_SCHEMA = {
+    'Separator': {'type': 'string'},
+    'Path': {'type': 'existing_path'}
 }

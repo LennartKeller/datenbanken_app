@@ -99,4 +99,4 @@ def create_texts_from_list(collection_data, collection_id):
     return texts
 
 def create_texts_from_read_config(read_config):
-    
+    pass
