@@ -8,7 +8,7 @@
   </div>
 </section>
     <div id="collection-list" class="container">
-      <div class="card" v-for="collection in collectionList" :key="collection.id">
+      <div class="card collection-card" v-for="collection in collectionList" :key="collection.id">
         <router-link :to="{name: 'annotation-view', params: {collectionId: collection.id}}">
           <header class="card-header">
             <p class="card-header-title"  >
@@ -111,5 +111,5 @@ export default {
 </script>
 
 <style scoped>
-
+  .collection-card {padding: 0.5em;}
 </style>
