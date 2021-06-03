@@ -1,9 +1,10 @@
 import json
 from pathlib import Path
-from flask.cli import with_appcontext
-import click
 
-from app import app, db
+import click
+from flask.cli import with_appcontext
+
+from app import app
 from app.models import *
 from app.tools import collection_to_dict, handle_collection_config, create_texts_from_list, \
     create_texts_from_read_config
@@ -46,7 +47,6 @@ def create_collection():
 @click.argument('filename', type=click.File('r'))
 @with_appcontext
 def from_json(filename):
-
     collection_src = json.load(filename)
     try:
         collection_config = collection_src['Config']
@@ -91,7 +91,6 @@ def write_collection():
 @click.argument('filename', type=click.File('w'))
 @with_appcontext
 def to_json(name, filename, only_annotated_texts):
-
     collection_query = list(Collection.query.filter_by(name=name))
     if not collection_query:
         click.echo(f"No collection with name {name} in database")
