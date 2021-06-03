@@ -5,7 +5,7 @@
         FastAl
       </p>
       <p class="subtitle">
-        An easy, web-based and active learning aided annotation tool.
+        An easy, web-based and active-learning aided annotation tool.
       </p>
     </div>
   </section>

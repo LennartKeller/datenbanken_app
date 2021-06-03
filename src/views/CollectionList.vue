@@ -20,6 +20,7 @@
                 </span>
                </a>
               <router-link :to="{name: 'annotation-view', params: {collectionId: collection.id}}"><span>{{collection.name}}</span></router-link>
+              <!--<CollectionProgressBar></CollectionProgressBar>-->
             </p>
           </header>
       </div>
@@ -71,9 +72,10 @@
 
 <script>
 import $backend from '@/backend'
-
+import CollectionProgressBar from './CollectionProgressBar'
 export default {
   name: 'CollectionList',
+  components: {CollectionProgressBar},
   data () {
     return {
       collectionList: null,
