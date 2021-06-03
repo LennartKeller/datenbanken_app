@@ -3,8 +3,8 @@ import json
 from pathlib import Path
 
 from app.models import *
-from app.tools import collection_to_dict, handle_collection_config, create_texts_from_list
-from app import app
+from app.tools import collection_to_dict, handle_collection_config, create_texts_from_list, create_texts_from_read_config
+from app import app, db
 
 def abort_if_false(ctx, param, value):
     if not value:
@@ -59,10 +59,17 @@ def from_json(filename):
     if isinstance(collection_data, list):
         with app.app_context():
             texts = create_texts_from_list(collection_data, collection_id)
-    else:
-        texts = []
-        click.echo("Not implemented now.")
+    elif isinstance(collection_data, dict):
+        with app.app_context():
+            try:
+                texts = create_texts_from_read_config(collection_data, collection_id)
+            except Exception as e:
+                click.echo(e)
+                return
 
+    # Finally commit all changes to the db
+    with app.app_context():
+        db.session.commit()
     click.echo(f"Imported collection {collection_config['Name']} with {len(texts)} into the application.")
 
 

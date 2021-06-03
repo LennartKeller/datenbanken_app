@@ -1,0 +1,34 @@
+{
+    "Config": {
+        "Name": "IMDB-Reviews",
+        "Tasks": [
+            {
+                "Type": "SequenceClassification",
+                "Name": "Sentiment",
+                "Description": "Decide if the review is <b> positive <b> or <b> negative </b>.",
+                "Classes": [
+                    "Negative",
+                    "Positive"
+                ],
+                "ActiveLearning": {
+                    "Start": 1,
+                    "ModelName": "LogRegUncertainty"
+                }
+            },
+            {
+                "Type": "SequenceClassification",
+                "Name": "Strength of rating",
+                "Description": "Decide if the rating is carried out strongly or weakly.",
+                "Classes": [
+                    "Strong",
+                    "Weak"
+                ],
+                "ActiveLearning": {
+                    "Start": 1,
+                    "ModelName": "LogRegUncertainty"
+                }
+            }
+        ]
+    },
+  "Texts": {"Path":  "imdb.txt", "Separator":  "\n"}
+}

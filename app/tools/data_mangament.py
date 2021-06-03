@@ -1,4 +1,5 @@
-from typing import Dict
+from typing import Dict, List
+from pathlib import Path
 
 from ..models import \
     Collection, \
@@ -7,6 +8,8 @@ from ..models import \
     SequenceClassificationTask, \
     ActiveLearningConfigForSequenceClassification, \
     Text
+
+from ..validation import DataReaderValidator, READER_CONFIG_SCHEMA, DataReaderValidationException
 
 
 def collection_to_dict(collection, only_annotated_texts=False):
@@ -51,7 +54,7 @@ def handle_collection_config(collection_config: Dict):
                 model_name=alc['ModelName'],
             )
             db.session.add(al_config)
-            db.session.commit()
+            db.session.flush()
             # 2. Create Task Config
             seq_task = SequenceClassificationTask(
                 al_config=al_config.id,
@@ -60,7 +63,7 @@ def handle_collection_config(collection_config: Dict):
                 description=t['Description']
             )
             db.session.add(seq_task)
-            db.session.commit()
+            db.session.flush()
             # Map classes to class config
             for class_label in t['Classes']:
                 task2class = SeqClassificationTaskToClasses(
@@ -68,10 +71,10 @@ def handle_collection_config(collection_config: Dict):
                     class_label=class_label
                 )
                 db.session.add(task2class)
-            db.session.commit()
+            db.session.flush()
 
     db.session.add(collection)
-    db.session.commit()
+    db.session.flush()
     return collection.id
 
 
@@ -95,8 +98,16 @@ def create_texts_from_list(collection_data, collection_id):
         )
         db.session.add(text)
         texts.append(texts)
-    db.session.commit()
+    db.session.flush()
     return texts
 
-def create_texts_from_read_config(read_config):
-    pass
+
+def create_texts_from_read_config(read_config: Dict, collection_id: int) -> List[Text]:
+    validator = DataReaderValidator(READER_CONFIG_SCHEMA)
+
+    if not validator.validate(read_config):
+        raise DataReaderValidationException(validator.get_error_messages())
+
+    collection_data = Path(read_config['Path']).read_text().split(read_config['Separator'])
+
+    return create_texts_from_list(collection_data=collection_data, collection_id=collection_id)

@@ -1,4 +1,4 @@
 READER_CONFIG_SCHEMA = {
     'Separator': {'type': 'string'},
-    'Path': {'type': 'existing_path'}
+    'Path': {'type': 'string', 'path exists': True}
 }
