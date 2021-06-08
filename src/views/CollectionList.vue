@@ -8,21 +8,31 @@
   </div>
 </section>
     <div id="collection-list" class="container">
-      <div class="card collection-card" v-for="collection in collectionList" :key="collection.id">
-          <header class="card-header">
-            <p class="card-header-title">
-              <a :href="'/api/collection/' + collection.id.toString() + '/download'">
-                <span class="download-button">
+      <div class="box collection-card" v-for="collection in collectionList" :key="collection.id">
+          <div class="hero">
+            <div class="hero-body">
+              <router-link
+                  :to="{name: 'annotation-view', params: {collectionId: collection.id}}"
+                  title="Open Collection">
+                  <div class="subtitle">
+                    <p>{{collection.name}}</p>
+                    <div class="container progress-bar-container">
+                    <CollectionProgressBar :collection-id="collection.id" :key="collection.id"></CollectionProgressBar>
+                    </div>
+                  </div>
+              </router-link>
+              <br>
+               <a :href="'/api/collection/' + collection.id.toString() + '/download'">
+                <span class="download-button" title="Download Collection.">
                   <b-icon
                       pack="fas"
                       icon="download"
-                      size="is-small"/>
+                      size="is-medium"/>
+                  <!--<div>Download Collection.</div>-->
                 </span>
                </a>
-              <router-link :to="{name: 'annotation-view', params: {collectionId: collection.id}}"><span>{{collection.name}}</span></router-link>
-              <CollectionProgressBar :collection-id="collection.id" :key="collection.id"></CollectionProgressBar>
-            </p>
-          </header>
+            </div>
+          </div>
       </div>
     </div>
     <br>
@@ -124,4 +134,5 @@ export default {
 <style scoped>
   .collection-card {margin: 0.5em;}
   .download-button {margin-right: 1em;}
+  .progress-bar-container{margin-top: 0.5em;}
 </style>

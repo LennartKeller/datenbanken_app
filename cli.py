@@ -62,7 +62,7 @@ def from_json(filename):
     try:
         collection_id = handle_collection_config(collection_config)
     except Exception as e:
-        click.echo(e)
+        click.echo(f'{type(e)}: {e}')
         return
 
     if isinstance(collection_data, list):

@@ -1,4 +1,6 @@
-from .component_station import COMPONTENTS
+import time
+
+from .component_registry import COMPONTENTS
 
 
 def init_active_learning_component(al_config):

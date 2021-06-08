@@ -29,4 +29,3 @@ def index_client():
 @app.route('/debug')
 def debug():
     return jsonify([t.content for t in Collection.query.get(1).get_unannotated_texts()])
-
