@@ -17,11 +17,11 @@
             },
             {
                 "Type": "SequenceClassification",
-                "Name": "Strength of rating",
-                "Description": "Decide if the rating is carried out strongly or weakly.",
+                "Name": "Certainty",
+                "Description": "Decide if you are sure that your sentiment annotation was correct.",
                 "Classes": [
-                    "Strong",
-                    "Weak"
+                    "Sure",
+                    "Not sure"
                 ]
             }
         ]
