@@ -1,3 +1,4 @@
+from collections import namedtuple
 from pathlib import Path
 from typing import Dict, List
 
@@ -47,13 +48,17 @@ def handle_collection_config(collection_config: Dict):
     for t in collection_config['Tasks']:
         if t['Type'] == "SequenceClassification":
             # 1. Create Active Learning Stuff
-            alc = t['ActiveLearning']
-            al_config = ActiveLearningConfigForSequenceClassification(
-                start=alc['Start'],
-                model_name=alc['ModelName'],
-            )
-            db.session.add(al_config)
-            db.session.flush()
+            try:
+                alc = t['ActiveLearning']
+                al_config = ActiveLearningConfigForSequenceClassification(
+                    start=alc['Start'],
+                    model_name=alc['ModelName'],
+                )
+                db.session.add(al_config)
+                db.session.flush()
+            except KeyError:
+                al_config = namedtuple('DummyAlConfig', ['id'])(id=None)
+
             # 2. Create Task Config
             seq_task = SequenceClassificationTask(
                 al_config=al_config.id,
