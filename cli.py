@@ -100,7 +100,7 @@ def to_json(name, filename, only_annotated_texts):
         return
     collection = collection_query[0]
     data = collection_to_dict(collection, only_annotated_texts=only_annotated_texts)
-    json.dump(data, filename)
+    json.dump(data, filename, indent=4)
     click.echo(f'Created output file {filename.name}')
 
 
