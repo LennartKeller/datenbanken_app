@@ -18,7 +18,7 @@
             {
                 "Type": "SequenceClassification",
                 "Name": "Strength of rating",
-                "Description": "Decide if the rating is carried out strongly or weakly.",
+                "Description": "Rating strength",
                 "Classes": [
                     "Strong",
                     "Weak"

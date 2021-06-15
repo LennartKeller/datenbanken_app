@@ -15,7 +15,7 @@
                   :to="{name: 'annotation-view', params: {collectionId: collection.id}}"
                   title="Open Collection">
                   <div class="subtitle">
-                    <p>{{collection.name}}</p>
+                    <span class="has-text-centered">{{collection.name}}</span>
                     <div class="container progress-bar-container">
                     <CollectionProgressBar :collection-id="collection.id" :key="collection.id"></CollectionProgressBar>
                     </div>
