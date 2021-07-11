@@ -24,8 +24,10 @@ class SecureResource(Resource):
 
 @api_rest.route('/resource/<string:resource_id>')
 class ResourceOne(Resource):
-    """ Unsecure Resource Class: Inherit from Resource """
-
+    """
+    Unsecure Resource Class: Inherit from Resource
+    Only used for debugging.
+    """
     def get(self, resource_id):
         timestamp = datetime.utcnow().isoformat()
         return {'timestamp': timestamp, 'id': resource_id}
@@ -37,7 +39,10 @@ class ResourceOne(Resource):
 
 @api_rest.route('/secure-resource/<string:resource_id>')
 class SecureResourceOne(SecureResource):
-    """ Unsecure Resource Class: Inherit from Resource """
+    """
+    Secure Resource Class: Inherit from Resource
+    Only used for debugging.
+    """
 
     def get(self, resource_id):
         timestamp = datetime.utcnow().isoformat()
@@ -46,7 +51,9 @@ class SecureResourceOne(SecureResource):
 
 @api_rest.route('/test/<string:id>')
 class TestResource(Resource):
-
+    """
+    Only used for debugging.
+    """
     def get(self, id):
         timestamp = datetime.utcnow().isoformat()
         return {
@@ -58,7 +65,9 @@ class TestResource(Resource):
 
 @api_rest.route('/text')
 class AllTexts(Resource):
-
+    """
+    GET Endpoint: Query a list of all texts in the database.
+    """
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.text_schema = TextSchema(many=True)
@@ -70,7 +79,9 @@ class AllTexts(Resource):
 
 @api_rest.route('/text/<int:id>')
 class SingleText(Resource):
-
+    """
+    GET Endpoint: Query a single text by its Database-ID.
+    """
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.text_schema = TextSchema()
@@ -82,6 +93,10 @@ class SingleText(Resource):
 
 @api_rest.route('/text/<int:text_id>/discard')
 class DiscardText(Resource):
+    """
+    GET Endpoint:  Discard a single text (given by its Database-ID)
+    Discarding a text means excluding it for the annotation process.
+    """
     def get(self, text_id):
         text = Text.query.get(text_id)
         text.discarded = True
@@ -92,6 +107,9 @@ class DiscardText(Resource):
 
 @api_rest.route('/collection')
 class AllCollectionsResource(Resource):
+    """
+    GET Endpoint: Query a list of all collections.
+    """
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.collection_schema = CollectionSchema(many=True)
@@ -104,7 +122,9 @@ class AllCollectionsResource(Resource):
 # TODO Remove ASAP
 @api_rest.route('/collection/<int:collection_id>/text-index/<int:text_index>')
 class TextFromProjectByIndex(Resource):
-
+    """
+    GET Endpoint: (Not used anymore) Query a text from a distinct collection by its index in the Database-Order.
+    """
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.text_schema = TextSchema()
@@ -116,7 +136,11 @@ class TextFromProjectByIndex(Resource):
 
 @api_rest.route("/text/<int:text_id>/seq-class-task/<int:task_id>/annotation")
 class SingleAnnotationEndpoint(Resource):
-
+    """
+    GET Endpoint: Query an existing annotation for a distinct task for a single text.
+    POST Endpoint: Add an annotation to the database. Overwrites existing ones.
+    Both Tasks and Texts are identified by their Database-IDs
+    """
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.seq_class_to_class_schema = SequenceClassificationTaskSchema()
@@ -161,7 +185,9 @@ class SingleAnnotationEndpoint(Resource):
 
 @api_rest.route('/collection/<int:collection_id>/tasks')
 class TasksOfCollectionResource(Resource):
-
+    """
+    GET Endpoint: Query a list of all tasks associated the the current collection.
+    """
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.seq_task_schema = SequenceClassificationTaskSchema(many=True)
@@ -179,7 +205,9 @@ class TasksOfCollectionResource(Resource):
 
 @api_rest.route('/sequence-classification/<int:task_id>')
 class SequenceClassificationConfigurationResource(Resource):
-
+    """
+    GET Endpoint: Returns a list of possible class labels for the given seq-class task.
+    """
     def get(self, task_id):
         # get classes
         classes = [
@@ -190,7 +218,13 @@ class SequenceClassificationConfigurationResource(Resource):
 
 @api_rest.route('/collection/<int:collection_id>/next')
 class NextTextResource(Resource):
+    """
+    GET Endpoint: Multipurpose Endpoint to get the next resource during annotation.
+    If active learning is enabled for a one the tasks the active learning component will be initiated and used
+    for querying the next instances.
 
+    TODO: This one should carefully be refactored as soon as new task-types are added.
+    """
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.text_schema = TextSchema(many=True)
@@ -248,7 +282,11 @@ class NextTextResource(Resource):
 
 @api_rest.route('/collection/add')
 class UploadCollectionResource(Resource):
-
+    """
+    POST Endpoint: Upload a new collection configuration json file.
+    TODO: Using a terminal emulation process to invoke the cli-tool for processing the config file yields more
+    disadvantages than advantages. Should be refactored as soon as the cli is moved into the web application itself.
+    """
     def post(self):
         """
         TODO it would yield multiple advantages to further refactor the cli tool
@@ -264,7 +302,9 @@ class UploadCollectionResource(Resource):
 
 @api_rest.route('/collection/<int:collection_id>/download')
 class DownloadCollectionResource(Resource):
-
+    """
+    GET Endpoint: Download as json file of the given collection with all its configurations and annotations.
+    """
     def get(self, collection_id):
         collection = Collection.query.get(collection_id)
         if collection is None:
@@ -283,6 +323,10 @@ class DownloadCollectionResource(Resource):
 
 @api_rest.route('/collection/<int:collection_id>/progress')
 class CollectionProgressResource(Resource):
+    """
+    GET Endpoint: Returns the number of annotated resources and the number of pending resources for the
+    given endpoint.
+    """
     def get(self, collection_id):
         collection = Collection.query.get(collection_id)
         if collection is None:
