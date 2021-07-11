@@ -8,6 +8,8 @@ from .client import client_bp
 from .models import db, Collection
 from .schemes import ma
 
+# This file contains the code to initialize the backend-application.
+
 app = Flask(__name__, static_folder='../dist/static')
 app.register_blueprint(api_bp)
 # app.register_blueprint(client_bp)
