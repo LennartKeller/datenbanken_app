@@ -4,6 +4,10 @@ from more_itertools import flatten
 
 from . import db
 
+# This file contains the table definitions for the Database-Relations.
+# Some of the models are extend by custom methods to facilitate their use in Python.
+# Each frequently model used method has a serialization method
+# to convert an entry into a json-compliant dict representation.
 
 class Collection(db.Model):
     __tablename__ = 'Collection'
