@@ -31,7 +31,7 @@ class Collection(db.Model):
         return list(sorted(unannotated_texts, key=lambda t: t.index))
 
     def get_annotated_texts(self):
-        # TODO Make this stable
+        # TODO Refactor this as soon as new task-types are added.
         all_tasks = self.get_tasks()
         annotated_texts = set()
         for task_type, tasks in all_tasks.items():
