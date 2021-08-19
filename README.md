@@ -1,6 +1,6 @@
 # FastAl
 
-An easy, web-based and active learning aided annotation tool.
+An easy, web-based and active-learning-aided annotation tool.
 
 ## Installation
 
@@ -19,10 +19,10 @@ yarn install
 ## Create a collection
 
 A collection represents a bunch of texts and one or more annotations tasks associated with the texts.
-It is defined by a single JSON file, containing both the configuration of the annotation process, and the data.
+It is defined by a single JSON file containing both the configuration of the annotation process and the data.
 It has the following general format:
 
-__Note__: Currently only sequence classification is available as task-type.
+__Note__: Currently, only sequence classification is available as task-type.
 
 ```json
 {
@@ -53,10 +53,7 @@ __Note__: Currently only sequence classification is available as task-type.
 }
 ```
 
-If a annotation task should not be alleviated by active learning, just remove the active learning part
-from the task configuration.
-It is also possible to use active learning with multiple tasks of the same collection, in this case at each iteration
-an instance for each task is queried.
+If an annotation task should not be alleviated by active learning, remove the active learning part from the task configuration. It is also possible to use active learning with multiple tasks of the same collection. In this case, at each iteration, an instance for each task is queried.
 
 
 ## Initialization
@@ -67,12 +64,12 @@ pipenv shell
 ```
 from within the project root directory.
 
-To initialize the database use the builtin cli-tool (from within the pipenv environment)
+To initialize the database, use the builtin cli-tool (from within the pipenv environment)
 ```bash
 python cli.py init-db
 ```
 
-To add a collection also use the cli-tool
+To add a collection, also use the cli-tool
 ```bash
 python cli.py from-json <YourCollection>.json
 ```
@@ -98,22 +95,20 @@ The application should now be running under http://localhost:8080
 
 # Project Structure
 
-The application is composed into two parts: The frontend and the backend.
-    * The backend is locacted in the app folder
+The application is composed of two parts: The frontend and the backend.
+    * The backend is located in the app folder
     * The frontend lies in the src directory
 
 ## Backend
 * `active_learning`: Contains the active learning components
-* `api`: Contains the definitions of all HTTP-Endpoints
-* `db`: Contains the SQLite-database
 * `models`: Contains the SQL-Alchemy definitions of the database tables
 * `schemes`: Contains some validation schemes
 * `tools`: Contains some helper functions
-* `validation`: Contains a first draft of a data validation pipelin
+* `validation`: Contains the first draft of a data validation pipeline
 
 ## Frontend
 
 * `components`: Not used
 * `views`: Contains all views that compose the frontend
 * `backend.js`: Defines all requests to the backend
-* `App.vue`: Entry point fot the frontend application
+* `App.vue`: Entry point of the frontend application
