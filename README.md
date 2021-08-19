@@ -61,8 +61,13 @@ an instance for each task is queried.
 
 ## Initialization
 
-To initialize the database use the builtin cli-tool (from within the pipenv environment)
+To activate the pipenv environment type 
+```bash
+pipenv shell
+```
+from within the project root directory.
 
+To initialize the database use the builtin cli-tool (from within the pipenv environment)
 ```bash
 python cli.py init-db
 ```
