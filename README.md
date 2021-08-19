@@ -94,5 +94,26 @@ yarn serve
 
 The application should now be running under http://localhost:8080
 
-## Define custom active learning components
-TODO
+<!--## Define custom active learning components-->
+
+# Project Structure
+
+The application is composed into two parts: The frontend and the backend.
+    * The backend is locacted in the app folder
+    * The frontend lies in the src directory
+
+## Backend
+* `active_learning`: Contains the active learning components
+* `api`: Contains the definitions of all HTTP-Endpoints
+* `db`: Contains the SQLite-database
+* `models`: Contains the SQL-Alchemy definitions of the database tables
+* `schemes`: Contains some validation schemes
+* `tools`: Contains some helper functions
+* `validation`: Contains a first draft of a data validation pipelin
+
+## Frontend
+
+* `components`: Not used
+* `views`: Contains all views that compose the frontend
+* `backend.js`: Defines all requests to the backend
+* `App.vue`: Entry point fot the frontend application
