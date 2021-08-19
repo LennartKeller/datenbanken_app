@@ -18,7 +18,7 @@ yarn install
 
 ## Create a collection
 
-A collection represents a bunch of texts and one or more annotations tasks associated with the texts.
+A collection represents a bunch of texts and one or more annotations tasks associated with them.
 It is defined by a single JSON file containing both the configuration of the annotation process and the data.
 It has the following general format:
 
@@ -54,7 +54,6 @@ __Note__: Currently, only sequence classification is available as task-type.
 ```
 
 If an annotation task should not be alleviated by active learning, remove the active learning part from the task configuration. It is also possible to use active learning with multiple tasks of the same collection. In this case, at each iteration, an instance for each task is queried.
-
 
 ## Initialization
 
