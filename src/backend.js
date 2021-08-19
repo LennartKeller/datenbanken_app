@@ -21,6 +21,7 @@ $axios.interceptors.response.use(function (response) {
   return Promise.reject(error)
 })
 
+/** This file contains a list of axios fetch requests to communicate with the backend **/
 export default {
 
   fetchResource () {

@@ -31,6 +31,13 @@
 </template>
 
 <script>
+/**
+ * This component holds the annotation view.
+ * It reads the list of tasks for the current collection an initiates a bunch of other subcomponents, who will handle
+ * things like rendering texts or tasks.
+ * This component is responsible for the checking the states of the subcomponents
+ * and handling the next/ discard buttons.
+ */
 import $backend from '../backend'
 import TextBox from '@/views/TextBox'
 import SequenceClassificationTask from '@/views/SequenceClassificationTask'
@@ -126,6 +133,9 @@ export default {
         })
     },
     submitAllTasks () {
+      /**
+       * Invokes submit method of all tasks.
+       */
       return new Promise(resolve => {
         let taskComponents = Object.keys(this.$refs)
           .filter(key => key.startsWith('task-'))

@@ -19,7 +19,9 @@
 </template>
 
 <script>
-
+/**
+ * Dummy component for debugging.
+ */
 import $backend from '../backend'
 
 export default {
